@@ -1,5 +1,3 @@
-'use client';
-
 import { CiUser, CiHeart, CiShoppingCart } from 'react-icons/ci';
 
 const TopNavLinks = () => {
