@@ -1,14 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '../utils/supabase';
 
 export async function fetchProducts() {
   try {
-    const products = await supabase.from('products').select('*');
+    const { data, error } = await supabase
+      .from('products')
+      .select('*, product_images(image_url)');
 
-    return products.data;
+    if (error) {
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch product data.');
+    }
+
+    return data;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch product data.');
@@ -17,13 +20,18 @@ export async function fetchProducts() {
 
 export async function fetchProductById(id: string) {
   try {
-    const product = await supabase
+    const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select('*, product_images(image_url), product_sizes(size)')
       .eq('product_id', id)
       .single();
 
-    return product.data;
+    if (error) {
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch product details.');
+    }
+
+    return data;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoice.');
