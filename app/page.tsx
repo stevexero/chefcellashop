@@ -2,9 +2,11 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className='grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-inter)]'>
-      <main className='flex flex-col gap-[32px] row-start-2 items-center sm:items-start'>
-        <Link href='/products'>See all Products</Link>
+    <div className='w-full font-[family-name:var(--font-inter)]'>
+      <main className='w-full flex justify-center mt-12'>
+        <Link href='/products' className='button-85'>
+          See all Products
+        </Link>
       </main>
     </div>
   );

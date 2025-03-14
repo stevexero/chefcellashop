@@ -1,4 +1,7 @@
 // import ImageUploader from '@/app/components/ImageUploader';
+import AddToCartForm from '@/app/components/AddToCartForm';
+import QuantitySelector from '@/app/components/QuantitySelector';
+import SizeSelector from '@/app/components/SizeSelector';
 import { fetchProductById } from '@/app/lib/data';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -39,7 +42,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         )}
         {/* OTHER IMAGES CAROUSEL */}
       </div>
-      <div className='w-1/2'>
+      <div className='w-1/2 px-8'>
         <p>T-SHIRT</p>
         <p className='mt-4 font-bold text-2xl'>
           {product.product_name.toUpperCase()}
@@ -49,20 +52,16 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           <span className='font-bold'>COLOR:</span> {product.color}
         </p>
         <p>{product.description || ''}</p>
-        <p className='mt-4 font-bold'>Size:</p>
-        <div className='mt-2 flex flex-row'>
-          {product.product_sizes && product.product_sizes.length > 0
-            ? product.product_sizes.map(
-                (s: { size: string }, index: number) => (
-                  <div
-                    className='w-12 h-12 border flex items-center justify-center cursor-pointer hover:bg-slate-700 hover:text-white -ml-[1px]'
-                    key={index}
-                  >
-                    {s.size}
-                  </div>
-                )
-              )
-            : 'One Size'}
+        {product?.product_sizes?.length > 0 ? (
+          <SizeSelector sizes={product.product_sizes} />
+        ) : null}
+        <div className='mt-6 flex flex-row items-center'>
+          <p className='font-bold mr-4'>Quantity:</p>
+          <QuantitySelector />
+        </div>
+        <div className='mt-12'>
+          {/* <button className='button-85 w-full'>Add to cart</button> */}
+          <AddToCartForm productId={product.product_id} />
         </div>
       </div>
     </main>
