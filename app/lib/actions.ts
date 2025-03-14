@@ -199,6 +199,29 @@ export async function uploadAvatarImage(file: File, userId: string) {
   }
 }
 
+export async function updateProfileAction(formData: FormData) {
+  const supabase = await createClient();
+  const profile_id = formData.get('profile_id')?.toString();
+  const first_name = formData.get('first_name')?.toString();
+  const last_name = formData.get('last_name')?.toString();
+
+  if (!profile_id) {
+    return { error: 'Profile ID is required.' };
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ first_name, last_name })
+    .eq('profile_id', profile_id);
+
+  if (error) {
+    console.error('Error updating profile:', error);
+    return { error: error.message };
+  }
+
+  return { message: 'Profile updated successfully!' };
+}
+
 export async function addItemToCart(formData: FormData) {
   const supabase = await createClient();
 

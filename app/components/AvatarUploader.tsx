@@ -40,13 +40,46 @@ const AvatarUploader = ({ userId }: AvatarUploaderProps) => {
     }
   };
 
+  const handleCancel = () => {
+    setSelectedFile(null);
+    setMessage('');
+  };
+
   return (
-    <div>
-      <input type='file' onChange={handleFileChange} />
-      <button onClick={handleUpload} disabled={uploading}>
-        {uploading ? 'Uploading...' : 'Upload Image'}
-      </button>
-      {message && <p>{message}</p>}
+    <div className='flex flex-col items-center -mt-6'>
+      <input
+        id='avatar-upload'
+        type='file'
+        onChange={handleFileChange}
+        className='hidden'
+      />
+      <label htmlFor='avatar-upload' className='cursor-pointer'>
+        <div className='bg-black text-white text-xs px-4 py-2 rounded-full shadow-lg shadow-slate-700 hover:bg-slate-700'>
+          Edit profile photo
+        </div>
+      </label>
+      {selectedFile && (
+        <p className='mt-4 text-sm font-black'>{selectedFile.name}</p>
+      )}
+      {selectedFile && (
+        <div className='flex flex-row items-center rounded-full shadow-lg shadow-slate-700'>
+          <button
+            onClick={handleUpload}
+            disabled={uploading}
+            className='mt-2 px-4 py-2 bg-blue-600 text-white rounded-l-full text-xs cursor-pointer font-bold hover:bg-blue-800'
+          >
+            {uploading ? 'Uploading...' : 'Upload Image'}
+          </button>
+          <button
+            onClick={handleCancel}
+            disabled={uploading}
+            className='mt-2 px-4 pr-6 py-2 bg-red-500 text-white rounded-r-full text-xs cursor-pointer font-bold hover:bg-red-800'
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+      {message && <p className='mt-2 text-sm'>{message}</p>}
     </div>
   );
 };
