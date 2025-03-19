@@ -1,9 +1,7 @@
 'use client';
 
-// app/components/ImageUploader.tsx
 import { useState } from 'react';
 
-// Import the upload function from wherever you defined it.
 import { uploadProductImage } from '@/app/lib/actions';
 
 interface ImageUploaderProps {

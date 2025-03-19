@@ -2,6 +2,7 @@ import { createClient } from '@/app/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import ProfileCard from '../components/ProfileCard';
 import { Suspense } from 'react';
+import QuickAddProduct from '../components/QuickAddProduct';
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -19,6 +20,11 @@ export default async function Dashboard() {
       <Suspense>
         <ProfileCard user={user} />
       </Suspense>
+      <div className='flex flex-col'>
+        <Suspense>
+          <QuickAddProduct user={user} />
+        </Suspense>
+      </div>
     </div>
   );
 }

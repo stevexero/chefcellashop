@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 
-type ModalType = 'user' | 'cart' | null;
+type ModalType = 'user' | 'cart' | 'add-product-modal' | null;
 
 interface ClientStoreState {
   quantity: number;
@@ -14,6 +14,9 @@ interface ClientStoreState {
   activeModal: ModalType;
   setActiveModal: (modal: ModalType) => void;
   toggleModal: (modal: ModalType) => void;
+
+  categoryId: string;
+  setCategoryId: (val: string) => void;
 }
 
 export const useClientStore = create<ClientStoreState>((set) => ({
@@ -29,4 +32,7 @@ export const useClientStore = create<ClientStoreState>((set) => ({
     set((state) => ({
       activeModal: state.activeModal === modal ? null : modal,
     })),
+
+  categoryId: 'select-category',
+  setCategoryId: (val: string) => set({ categoryId: val }),
 }));

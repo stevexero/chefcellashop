@@ -1,4 +1,3 @@
-// import { supabase } from '../utils/supabase';
 import { createClient } from '../utils/supabase/server';
 
 export async function fetchUser() {
@@ -77,7 +76,61 @@ export async function fetchProductById(id: string) {
     return data;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
+    throw new Error('Failed to fetch product details.');
+  }
+}
+
+export async function fetchCategories() {
+  const supabase = await createClient();
+
+  try {
+    const { data, error } = await supabase.from('categories').select('*');
+
+    if (error) {
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch product categories.');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch categories.');
+  }
+}
+
+export async function fetchSizes() {
+  const supabase = await createClient();
+
+  try {
+    const { data, error } = await supabase.from('sizes').select('*');
+
+    if (error) {
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch sizes data.');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch sizes data.');
+  }
+}
+
+export async function fetchColors() {
+  const supabase = await createClient();
+
+  try {
+    const { data, error } = await supabase.from('colors').select('*');
+
+    if (error) {
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch colors data.');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch colors data.');
   }
 }
 

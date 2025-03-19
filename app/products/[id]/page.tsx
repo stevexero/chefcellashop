@@ -47,7 +47,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         <p className='mt-4 font-bold text-2xl'>
           {product.product_name.toUpperCase()}
         </p>
-        <p className='mt-4'>${product.price}</p>
+        <p className='mt-4'>${product.base_price}</p>
         <p className='mt-4'>
           <span className='font-bold'>COLOR:</span> {product.color}
         </p>
