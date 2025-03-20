@@ -5,9 +5,6 @@ import { create } from 'zustand';
 type ModalType = 'user' | 'cart' | 'add-product-modal' | null;
 
 interface ClientStoreState {
-  quantity: number;
-  setQuantity: (qty: number) => void;
-
   selectedSize: string;
   setSelectedSize: (size: string) => void;
 
@@ -20,9 +17,6 @@ interface ClientStoreState {
 }
 
 export const useClientStore = create<ClientStoreState>((set) => ({
-  quantity: 1,
-  setQuantity: (qty: number) => set({ quantity: qty }),
-
   selectedSize: 'M',
   setSelectedSize: (size: string) => set({ selectedSize: size }),
 

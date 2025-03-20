@@ -44,7 +44,9 @@ export async function fetchProducts() {
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('*, product_images(image_url)');
+      .select(
+        '*, product_images(image_url), product_colors(color:colors(color_id, color_name, color_hex_code)), product_sizes(size:sizes(size_id))'
+      );
 
     if (error) {
       console.error('Database Error:', error);
@@ -64,7 +66,9 @@ export async function fetchProductById(id: string) {
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('*, product_images(image_url), product_sizes(size)')
+      .select(
+        '*, product_images(image_url), categories(category_id, category_name), product_colors(color:colors(color_id, color_name, color_hex_code)), product_sizes(size_id, price_mod, size:sizes(size_id, size))'
+      )
       .eq('product_id', id)
       .single();
 

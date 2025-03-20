@@ -200,3 +200,15 @@ body {
   border-width: 0 3px 3px 0;
   transform: rotate(45deg);
 }
+
+/* Screen Reader */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
