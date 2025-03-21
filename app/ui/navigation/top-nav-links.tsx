@@ -13,7 +13,11 @@ const TopNavLinks = () => {
         className=' cursor-pointer'
         onClick={() => toggleModal('user')}
       />
-      <CiShoppingCart size='1.5rem' className='ml-4 cursor-pointer' />
+      <CiShoppingCart
+        size='1.5rem'
+        className='ml-4 cursor-pointer'
+        onClick={() => toggleModal('cart')}
+      />
     </div>
   );
 };

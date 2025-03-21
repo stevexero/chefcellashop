@@ -37,7 +37,6 @@ export default function AddProductForm({ user }: AddProductCategoryProps) {
     setSelectedFiles,
     imageColorAssignments,
     setImageColorAssignments,
-    setVariedSizedSelected,
     setSizes,
     showAddSizeForm,
     toggleShowAddSizeForm,
@@ -202,7 +201,6 @@ export default function AddProductForm({ user }: AddProductCategoryProps) {
       setProductBasePrice(0.0);
       setProductDescription('');
       setImageColorAssignments({});
-      setVariedSizedSelected(false);
       setSizes([]);
       setSizePriceModifiers([]);
       setSizeText('');

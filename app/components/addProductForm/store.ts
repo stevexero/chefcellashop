@@ -117,8 +117,22 @@ export const useStore = create<StoreState>((set, get) => ({
           : assignments,
     }),
 
+  //   variedSizesSelected: false,
+  //   setVariedSizedSelected: (val: boolean) => set({ variedSizesSelected: val }),
   variedSizesSelected: false,
-  setVariedSizedSelected: (val: boolean) => set({ variedSizesSelected: val }),
+  setVariedSizedSelected: (val: boolean) =>
+    set((state) => ({
+      variedSizesSelected: val,
+      selectedSizes: val
+        ? state.selectedSizes
+        : [
+            {
+              size_id: '00000000-0000-0000-0000-000000000001',
+              size: 'one-size',
+            },
+          ],
+      sizePriceModifiers: val ? state.sizePriceModifiers : [],
+    })),
 
   sizes: [],
   setSizes: (sizes: SizesProps[] | ((prev: SizesProps[]) => SizesProps[])) =>

@@ -2,6 +2,7 @@
 
 import { BiMinus, BiPlus } from 'react-icons/bi';
 import { useStore } from '../store';
+import { useEffect } from 'react';
 
 const QuantitySelector = () => {
   const { quantity, setQuantity } = useStore();
@@ -17,6 +18,14 @@ const QuantitySelector = () => {
   const handleIncrement = () => {
     setQuantity(quantity + 1);
   };
+
+  useEffect(() => {
+    // Initialize to 1
+    if (quantity > 1) {
+      setQuantity(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className='mt-6 flex flex-row items-center'>

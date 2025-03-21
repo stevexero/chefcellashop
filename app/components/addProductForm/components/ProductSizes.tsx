@@ -26,6 +26,7 @@ export default function ProductSizes() {
   } = useStore();
 
   const numericBasePrice = productBasePrice || 0;
+  const oneSizeId = '00000000-0000-0000-0000-000000000001';
 
   const handleCheckboxChange = (size: SizesProps, checked: boolean) => {
     if (checked) {
@@ -107,6 +108,8 @@ export default function ProductSizes() {
     getSizes();
   }, [getSizes]);
 
+  const filteredSizes = sizes.filter((size) => size.size_id !== oneSizeId);
+
   return (
     <>
       <div className='mt-4'>
@@ -153,7 +156,7 @@ export default function ProductSizes() {
           </div>
           {sizes && sizes.length > 0 ? (
             <ul className='w-full p-2'>
-              {sizes.map((size) => (
+              {filteredSizes.map((size) => (
                 <li key={size.size_id} className='w-full flex flex-col'>
                   <div className='flex flex-row items-center justify-between'>
                     <label

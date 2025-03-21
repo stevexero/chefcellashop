@@ -1,4 +1,17 @@
 import { createClient } from '../utils/supabase/server';
+import { PostgrestSingleResponse } from '@supabase/supabase-js';
+
+interface CartItem {
+  cart_item_id: string;
+  product_id: string;
+  size_id: string | null;
+  color_id: string | null;
+  quantity: number;
+  price: number;
+  products: { product_name: string }[]; // Changed to array
+  sizes: { size: string }[] | null; // Changed to array or null
+  colors: { color_name: string }[] | null; // Changed to array or null
+}
 
 export async function fetchUser() {
   const supabase = await createClient();
@@ -138,6 +151,90 @@ export async function fetchColors() {
   }
 }
 
+export async function fetchCartItems() {
+  const supabase = await createClient();
+
+  // Get authenticated user (if any)
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const userId = user?.id || null;
+
+  // Find the cart
+  let cartQueryBuilder = supabase.from('carts').select('cart_id');
+
+  if (userId) {
+    cartQueryBuilder = cartQueryBuilder.eq('user_id', userId);
+  } else {
+    cartQueryBuilder = cartQueryBuilder.is('user_id', null);
+  }
+
+  const { data: cart, error: cartError } =
+    (await cartQueryBuilder.single()) as PostgrestSingleResponse<{
+      cart_id: string;
+    }>;
+  if (cartError && cartError.code !== 'PGRST116') {
+    // No rows found is OK
+    throw new Error(cartError.message);
+  }
+
+  if (!cart) {
+    return { items: [] }; // Empty cart if none exists
+  }
+
+  const cartId = cart.cart_id;
+
+  // Fetch cart items with details
+  const { data: items, error: itemsError } = await supabase
+    .from('cart_items')
+    .select(
+      `
+          cart_item_id,
+          product_id,
+          size_id,
+          color_id,
+          quantity,
+          price,
+          products (
+            product_name
+          ),
+          sizes (
+            size
+          ),
+          colors (
+            color_name
+          )
+        `
+    )
+    .eq('cart_id', cartId);
+
+  if (itemsError) {
+    throw new Error(itemsError.message);
+  }
+
+  // Adjust the items to match CartItem interface
+  const adjustedItems = (items || []).map((item) => ({
+    ...item,
+    products: Array.isArray(item.products)
+      ? item.products
+      : item.products
+      ? [item.products]
+      : [],
+    sizes: item.sizes
+      ? Array.isArray(item.sizes)
+        ? item.sizes
+        : [item.sizes]
+      : null,
+    colors: item.colors
+      ? Array.isArray(item.colors)
+        ? item.colors
+        : [item.colors]
+      : null,
+  })) as CartItem[];
+
+  return { items: adjustedItems };
+}
+
 // export async function fetchCartByCartId(id: string) {
-//
+
 // }

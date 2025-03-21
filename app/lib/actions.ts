@@ -4,6 +4,7 @@ import { encodedRedirect } from '@/app/utils/utils';
 import { createClient } from '@/app/utils/supabase/server';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { PostgrestSingleResponse } from '@supabase/supabase-js';
 
 interface ColorProps {
   color_id: string;
@@ -67,37 +68,38 @@ export const signInAction = async (formData: FormData) => {
   return redirect('/dashboard');
 };
 
-export async function uploadProductImage(file: File, productId: string) {
-  const supabase = await createClient();
-  const filePath = `${productId}/${file.name}`;
+// Deprecated
+// export async function uploadProductImage(file: File, productId: string) {
+//   const supabase = await createClient();
+//   const filePath = `${productId}/${file.name}`;
 
-  const { error: uploadError } = await supabase.storage
-    .from('photos')
-    .upload(filePath, file);
+//   const { error: uploadError } = await supabase.storage
+//     .from('photos')
+//     .upload(filePath, file);
 
-  if (uploadError) {
-    console.error('Upload error:', uploadError);
-    return;
-  }
+//   if (uploadError) {
+//     console.error('Upload error:', uploadError);
+//     return;
+//   }
 
-  const publicUrlData = supabase.storage.from('photos').getPublicUrl(filePath);
-  const publicUrl = publicUrlData.data.publicUrl;
+//   const publicUrlData = supabase.storage.from('photos').getPublicUrl(filePath);
+//   const publicUrl = publicUrlData.data.publicUrl;
 
-  if (!publicUrl) {
-    console.error('Error getting public URL');
-    return;
-  }
+//   if (!publicUrl) {
+//     console.error('Error getting public URL');
+//     return;
+//   }
 
-  const { error: dbError } = await supabase
-    .from('product_images')
-    .insert([{ product_id: productId, image_url: publicUrl }]);
+//   const { error: dbError } = await supabase
+//     .from('product_images')
+//     .insert([{ product_id: productId, image_url: publicUrl }]);
 
-  if (dbError) {
-    console.error('Error inserting image record:', dbError);
-  } else {
-    console.log('Image uploaded and record created successfully!');
-  }
-}
+//   if (dbError) {
+//     console.error('Error inserting image record:', dbError);
+//   } else {
+//     console.log('Image uploaded and record created successfully!');
+//   }
+// }
 
 export async function uploadAvatarImage(file: File, userId: string) {
   const supabase = await createClient();
@@ -112,7 +114,6 @@ export async function uploadAvatarImage(file: File, userId: string) {
 
   if (profileError) {
     console.error('Error fetching current profile:', profileError);
-    // Depending on your needs, you might return or continue.
   }
 
   if (currentProfile && currentProfile.avatar_url) {
@@ -184,50 +185,232 @@ export async function updateProfileAction(formData: FormData) {
   return { message: 'Profile updated successfully!' };
 }
 
-export async function addItemToCart(formData: FormData) {
-  const supabase = await createClient();
-
+export async function addItemToCartAction(formData: FormData) {
+  console.log('**************************************************');
+  console.log('addItemToCartAction Fired');
+  console.log('addItemToCartAction formData', formData);
   const productId = formData.get('productId') as string;
-  const size = formData.get('size') as string | null;
+  let sizeId = (formData.get('sizeId') as string | null) || null;
+  const colorId = (formData.get('colorId') as string | null) || null;
   const quantityStr = formData.get('quantity') as string;
   const quantity = parseInt(quantityStr, 10) || 1;
-  const userId = (formData.get('userId') as string) || null;
 
-  let cartQuery;
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const userId = user?.id || null;
+
+  const { data: product, error: productError } = await supabase
+    .from('products')
+    .select('base_price')
+    .eq('product_id', productId)
+    .single();
+
+  if (productError) {
+    // console.log('////////////////////////////');
+    // console.log(productError.message);
+    // console.log('////////////////////////////');
+    return { error: productError.message };
+  }
+
+  console.log(sizeId);
+
+  if (sizeId === 'one-size') {
+    sizeId = null; // Treat 'one-size' as no size in the database
+  }
+
+  //   let price = 0;
+  //   if (sizeId !== 'one-size') {
+  //     let priceMod = 0;
+  //     if (sizeId) {
+  //       const { data: sizeMod, error: sizeError } = await supabase
+  //         .from('product_sizes')
+  //         .select('price_mod')
+  //         .eq('product_id', productId)
+  //         .eq('size_id', sizeId)
+  //         .single();
+  //       if (sizeError && sizeError.code !== 'PGRST116') {
+  //         // console.log('////////////////////////////');
+  //         // console.log(sizeError.message);
+  //         // console.log('////////////////////////////');
+  //         return { error: sizeError.message };
+  //       }
+  //       priceMod = sizeMod?.price_mod || 0;
+  //     }
+
+  //     price = product.base_price + priceMod;
+  //   } else {
+  //     price = product.base_price;
+  //   }
+
+  let price = product.base_price;
+  if (sizeId) {
+    const { data: sizeMod, error: sizeError } = await supabase
+      .from('product_sizes')
+      .select('price_mod')
+      .eq('product_id', productId)
+      .eq('size_id', sizeId)
+      .single();
+    if (sizeError && sizeError.code !== 'PGRST116') {
+      console.log('////////////////////////////');
+      console.log(sizeError.message);
+      console.log('////////////////////////////');
+      return { error: sizeError.message };
+    }
+    price = product.base_price + (sizeMod?.price_mod || 0);
+  }
+
+  console.log('------------------------------------------------');
+  console.log(price);
+  console.log('------------------------------------------------');
+
+  let cartQuery = supabase
+    .from('carts')
+    .select('cart_id')
+    .single() as unknown as Promise<
+    PostgrestSingleResponse<{ cart_id: string }>
+  >;
 
   if (userId) {
     cartQuery = supabase
       .from('carts')
-      .select('*')
+      .select('cart_id')
       .eq('user_id', userId)
-      .single();
+      .single() as unknown as Promise<
+      PostgrestSingleResponse<{ cart_id: string }>
+    >;
   } else {
-    cartQuery = supabase.from('carts').select('*').is('user_id', null).single();
+    cartQuery = supabase
+      .from('carts')
+      .select('cart_id')
+      .is('user_id', null)
+      .single() as unknown as Promise<
+      PostgrestSingleResponse<{ cart_id: string }>
+    >;
   }
 
-  const { data: cart } = await cartQuery;
+  const { data: cart, error: cartError } = await cartQuery;
+  if (cartError && cartError.code !== 'PGRST116') {
+    // console.log('////////////////////////////');
+    // console.log(cartError.message);
+    // console.log('////////////////////////////');
+    return { error: cartError.message };
+  }
 
-  let cartId: string | null = null;
+  let cartId = cart?.cart_id;
 
-  if (cart) {
-    cartId = cart.cart_id;
-  } else {
+  if (!cartId) {
     const { data: newCart, error: newCartError } = await supabase
       .from('carts')
       .insert([{ user_id: userId }])
-      .select('*')
+      .select('cart_id')
       .single();
-    if (newCartError) throw new Error(newCartError.message);
+    if (newCartError) return { error: newCartError.message };
     cartId = newCart.cart_id;
   }
 
-  const { error: insertError } = await supabase
+  // Check for existing cart item
+  //   const { data: existingItem, error: fetchError } = await supabase
+  //     .from('cart_items')
+  //     .select('cart_item_id, quantity')
+  //     .eq('cart_id', cartId)
+  //     .eq('product_id', productId)
+  //     .eq('size_id', sizeId || null)
+  //     .eq('color_id', colorId || null)
+  //     .single();
+  const { data: existingItem, error: fetchError } = await supabase
     .from('cart_items')
-    .insert([{ cart_id: cartId, product_id: productId, size, quantity }]);
-  if (insertError) throw new Error(insertError.message);
+    .select('cart_item_id, quantity')
+    .eq('cart_id', cartId)
+    .eq('product_id', productId)
+    .match({ size_id: sizeId, color_id: colorId }) // Use match for null-safe comparison
+    .single();
 
-  return;
+  if (fetchError && fetchError.code !== 'PGRST116') {
+    console.log('////////////////////////////');
+    console.log(fetchError.message);
+    console.log('////////////////////////////');
+    // PGRST116 = no rows found
+    return { error: fetchError.message };
+  }
+
+  if (existingItem) {
+    const newQuantity = existingItem.quantity + quantity;
+    const { error: updateError } = await supabase
+      .from('cart_items')
+      .update({ quantity: newQuantity })
+      .eq('cart_item_id', existingItem.cart_item_id);
+
+    if (updateError) return { error: updateError.message };
+  } else {
+    const { error: insertError } = await supabase.from('cart_items').insert([
+      {
+        cart_id: cartId,
+        product_id: productId,
+        size_id: sizeId,
+        color_id: colorId,
+        quantity,
+        price,
+      },
+    ]);
+
+    if (insertError) {
+      //   console.log('////////////////////////////');
+      //   console.log(insertError.message);
+      //   console.log('////////////////////////////');
+      return { error: insertError.message };
+    }
+  }
+
+  return { message: 'Item added to cart successfully' };
 }
+
+// export async function addItemToCart(formData: FormData) {
+//   const supabase = await createClient();
+
+//   const productId = formData.get('productId') as string;
+//   const size = formData.get('size') as string | null;
+//   const quantityStr = formData.get('quantity') as string;
+//   const quantity = parseInt(quantityStr, 10) || 1;
+//   const userId = (formData.get('userId') as string) || null;
+
+//   let cartQuery;
+
+//   if (userId) {
+//     cartQuery = supabase
+//       .from('carts')
+//       .select('*')
+//       .eq('user_id', userId)
+//       .single();
+//   } else {
+//     cartQuery = supabase.from('carts').select('*').is('user_id', null).single();
+//   }
+
+//   const { data: cart } = await cartQuery;
+
+//   let cartId: string | null = null;
+
+//   if (cart) {
+//     cartId = cart.cart_id;
+//   } else {
+//     const { data: newCart, error: newCartError } = await supabase
+//       .from('carts')
+//       .insert([{ user_id: userId }])
+//       .select('*')
+//       .single();
+//     if (newCartError) throw new Error(newCartError.message);
+//     cartId = newCart.cart_id;
+//   }
+
+//   const { error: insertError } = await supabase
+//     .from('cart_items')
+//     .insert([{ cart_id: cartId, product_id: productId, size, quantity }]);
+//   if (insertError) throw new Error(insertError.message);
+
+//   return;
+// }
 
 export const resetPasswordAction = async (formData: FormData) => {
   const supabase = await createClient();
@@ -272,6 +455,7 @@ export const signOutAction = async () => {
   return redirect('/sign-in');
 };
 
+// Creates new category
 export const addCategoryAction = async (formData: FormData) => {
   const categoryName = formData.get('add-category-field') as string;
 
@@ -294,8 +478,8 @@ export const addCategoryAction = async (formData: FormData) => {
   return { message: 'Category created successfully!' };
 };
 
+// Initialize and add product - Step 1
 export const addProductAction = async (formData: FormData) => {
-  console.log(formData);
   const categoryId = formData.get('category_id') as string;
   const productName = formData.get('product_name') as string;
   const productDescription = formData.get('description') as string;
@@ -337,6 +521,7 @@ export const addProductAction = async (formData: FormData) => {
   };
 };
 
+// Adds sizes to product - Step 2
 export const addSizesAction = async (formData: FormData) => {
   const productId = formData.get('product_id') as string;
   const selectedSizesStr = formData.get('selectedSizes') as string;
@@ -410,22 +595,18 @@ export const addColorsAction = async (formData: FormData) => {
 };
 
 export async function addImagesAction(formData: FormData) {
-  console.log('addImagesAction fired');
   const productId = formData.get('product_id') as string;
   const files = formData.getAll('files') as File[];
   const imageColorAssignmentsStr = formData.get(
     'imageColorAssignments'
   ) as string;
 
-  console.log(productId);
-  console.log(files);
-  console.log(imageColorAssignmentsStr);
-
   if (!files || files.length === 0) {
     return { message: 'No images provided' };
   }
 
   let imageColorAssignments: { [key: number]: ColorProps | null } = {};
+
   try {
     imageColorAssignments = JSON.parse(imageColorAssignmentsStr || '{}');
   } catch (error) {
@@ -440,7 +621,6 @@ export async function addImagesAction(formData: FormData) {
     const file = files[i];
     const filePath = `${productId}/${file.name}`;
 
-    // Upload to Supabase Storage
     const { error: uploadError } = await supabase.storage
       .from('photos')
       .upload(filePath, file, { upsert: true });
@@ -498,6 +678,7 @@ export async function addImagesAction(formData: FormData) {
   return { message: 'Images added successfully!', uploadedImages };
 }
 
+// Create new size
 export async function addSizeAction(sizeText: string) {
   const supabase = await createClient();
 
@@ -510,6 +691,7 @@ export async function addSizeAction(sizeText: string) {
   return { message: 'Size added successfully!' };
 }
 
+// Create new color
 export async function addColorAction(formData: FormData) {
   const colorName = formData.get('color_name') as string;
   const colorHex = formData.get('color_hex_code') as string;

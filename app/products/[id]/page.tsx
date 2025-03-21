@@ -22,7 +22,9 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         </Suspense>
       </div>
       <div className='w-1/2 px-8'>
-        <ProductDetails product={product} />
+        <Suspense>
+          <ProductDetails product={product} />
+        </Suspense>
       </div>
     </main>
   );

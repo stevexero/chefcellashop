@@ -9,6 +9,7 @@ import ProductPrice from './components/ProductPrice';
 import ProductColors from './components/ProductColors';
 import ProductSizes from './components/ProductSizes';
 import { useStore } from './store';
+// import { useEffect } from 'react';
 
 interface Category {
   category_id: string;
@@ -44,7 +45,11 @@ interface ProductDetailsProps {
 }
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
-  const { adjustedPrice, selectedColorId } = useStore();
+  const { adjustedPrice } = useStore();
+
+  // useEffect(() => {
+  //   console.log(product);
+  // }, [product]);
 
   return (
     <>
@@ -69,7 +74,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       <div className='mt-12'>
         <AddToCartForm
           productId={product.product_id}
-          selectedColorId={selectedColorId}
+          isOneSize={product.product_sizes.length === 0}
         />
       </div>
     </>

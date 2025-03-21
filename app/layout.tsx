@@ -7,6 +7,7 @@ import { createClient } from './utils/supabase/server';
 import AddProductModal from './components/AddProductModal';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CartModal from './components/CartModal';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -36,6 +37,7 @@ export default async function RootLayout({
         {children}
         <UserModal user={user} />
         <AddProductModal user={user} />
+        <CartModal />
         <ToastContainer />
       </body>
     </html>
