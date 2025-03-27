@@ -104,7 +104,7 @@ const CartModal = () => {
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         `}
       >
-        <div className='p-4 flex flex-col h-full'>
+        <div className='p-4 flex flex-col md:h-full'>
           <div className='flex justify-between items-center mb-4'>
             <p className='text-lg font-bold'>Shopping Cart</p>
             <button
