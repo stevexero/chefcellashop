@@ -2,6 +2,8 @@
 
 import { createClient } from '@/app/utils/supabase/server';
 import { getSession } from '../session';
+import { sendEmail } from '@/app/utils/email';
+import { generateOrderConfirmationEmail } from '@/app/utils/emailTemplates';
 
 export async function createOrderAction(formData: FormData) {
   const paymentId = formData.get('paymentId') as string;
@@ -152,6 +154,31 @@ export async function createOrderAction(formData: FormData) {
     .eq('cart_id', cartId);
 
   if (deleteCartError) return { error: deleteCartError.message };
+
+  // After successfully creating the order and before returning
+  try {
+    await sendEmail({
+      to: customerDetails.email,
+      subject: 'Order Confirmation - Chef Cella',
+      html: generateOrderConfirmationEmail({
+        firstName: customerDetails.firstName,
+        lastName: customerDetails.lastName,
+        orderItems: cartItems,
+        address: {
+          street_address: address.street_address,
+          street_address_2: address.street_address_2,
+          city: address.city,
+          state: address.state,
+          postal_code: address.postal_code,
+          country: address.country,
+        },
+        totalAmount: amount,
+      }),
+    });
+  } catch (emailError) {
+    console.error('Failed to send order confirmation email:', emailError);
+    // Don't throw the error - we still want to return the order details even if email fails
+  }
 
   return {
     message: 'Order created successfully',
