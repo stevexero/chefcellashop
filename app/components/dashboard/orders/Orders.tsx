@@ -44,7 +44,7 @@ export default function Orders() {
 
   if (loading) {
     return (
-      <div className='ml-12 p-4 border border-slate-300 shadow-xl shadow-slate-400 rounded-2xl'>
+      <div className='ml-0 md:ml-12 p-4 border border-slate-300 shadow-xl shadow-slate-400 rounded-2xl'>
         <h2 className='text-2xl font-bold mb-4'>Orders</h2>
         <div className='flex items-center justify-center'>
           <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900'></div>
@@ -55,7 +55,7 @@ export default function Orders() {
 
   if (error) {
     return (
-      <div className='ml-12 p-4 border border-slate-300 shadow-xl shadow-slate-400 rounded-2xl'>
+      <div className='ml-0 md:ml-12 p-4 border border-slate-300 shadow-xl shadow-slate-400 rounded-2xl'>
         <h2 className='text-2xl font-bold mb-4'>Orders</h2>
         <p className='text-red-500'>{error}</p>
       </div>
@@ -63,7 +63,7 @@ export default function Orders() {
   }
 
   return (
-    <div className='ml-12 mt-12 p-4 border border-slate-300 shadow-xl shadow-slate-400 rounded-2xl'>
+    <div className='ml-0 md:ml-12 mt-12 p-4 border border-slate-300 shadow-xl shadow-slate-400 rounded-2xl'>
       <h2 className='text-2xl font-bold mb-4'>Orders</h2>
       <div className='overflow-x-auto'>
         <table className='min-w-full divide-y divide-gray-200'>
