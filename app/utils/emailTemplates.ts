@@ -107,3 +107,28 @@ export function generateShippingEmail({
     </div>
   `;
 }
+
+export function generateDeliveryEmail({
+  firstName,
+  orderNumber,
+}: {
+  firstName: string;
+  orderNumber: number;
+}) {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1 style="color: #333; text-align: center;">Your Order Has Been Delivered!</h1>
+      <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+        <p style="font-size: 16px;">Hi ${firstName},</p>
+        <p style="font-size: 16px;">Great news! Your order #${orderNumber} has been delivered.</p>
+        <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
+          <p>We hope you love your new items! If you have any questions or concerns, please don't hesitate to contact us.</p>
+        </div>
+        <p style="color: #666;">Thank you for shopping with Chef Cella!</p>
+      </div>
+      <div style="text-align: center; color: #666; font-size: 12px; margin-top: 20px;">
+        <p>This is an automated message, please do not reply.</p>
+      </div>
+    </div>
+  `;
+}

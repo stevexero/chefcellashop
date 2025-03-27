@@ -6,6 +6,7 @@ import { sendEmail } from '@/app/utils/email';
 import {
   generateOrderConfirmationEmail,
   generateShippingEmail,
+  generateDeliveryEmail,
 } from '@/app/utils/emailTemplates';
 
 export async function createOrderAction(formData: FormData) {
@@ -158,7 +159,6 @@ export async function createOrderAction(formData: FormData) {
 
   if (deleteCartError) return { error: deleteCartError.message };
 
-  // After successfully creating the order and before returning
   try {
     await sendEmail({
       to: customerDetails.email,
@@ -181,7 +181,6 @@ export async function createOrderAction(formData: FormData) {
     });
   } catch (emailError) {
     console.error('Failed to send order confirmation email:', emailError);
-    // Don't throw the error - we still want to return the order details even if email fails
   }
 
   return {
@@ -223,7 +222,6 @@ export async function updateOrderStatus(
     tracking_company?: string;
   } = { status: newStatus };
 
-  // Only add tracking info if both are provided
   if (trackingNumber && trackingCompany) {
     updateData.tracking_number = trackingNumber;
     updateData.tracking_company = trackingCompany;
@@ -245,105 +243,91 @@ export async function updateOrderStatus(
 
   console.log('Order status updated successfully:', data);
 
-  // If status is shipped and we have tracking info, send shipping email
-  if (newStatus === 'shipped' && trackingNumber && trackingCompany) {
-    try {
-      // First get the order with profile or temp_user info
-      const { data: orderDetails, error: orderError } = await supabase
-        .from('orders')
-        .select(
-          `
-          order_id,
-          order_number,
-          profile_id,
-          temp_user_id,
-          shipping_address_id,
-          addresses!shipping_address_id (
-            street_address,
-            street_address_2,
-            city,
-            state,
-            postal_code,
-            country
-          )
-        `
-        )
-        .eq('order_id', orderId)
-        .single();
+  // Get customer details for email notifications
+  const { data: orderDetails, error: orderError } = await supabase
+    .from('orders')
+    .select(
+      `
+      order_id,
+      order_number,
+      profile_id,
+      temp_user_id
+    `
+    )
+    .eq('order_id', orderId)
+    .single();
 
-      if (orderError) {
-        console.error('Error fetching order details:', orderError);
-        throw orderError;
-      }
+  if (orderError) {
+    console.error('Error fetching order details:', orderError);
+    return { error: orderError.message };
+  }
 
-      if (!orderDetails) {
-        throw new Error('Order details not found');
-      }
+  if (!orderDetails) {
+    throw new Error('Order details not found');
+  }
 
-      // Then get the customer details based on whether it's a profile or temp_user
-      let customerEmail, customerName;
-      if (orderDetails.profile_id) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('email, first_name, last_name')
-          .eq('profile_id', orderDetails.profile_id)
-          .single();
+  // Get customer details based on whether it's a profile or temp_user
+  let customerEmail, customerName;
+  if (orderDetails.profile_id) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email, first_name, last_name')
+      .eq('profile_id', orderDetails.profile_id)
+      .single();
 
-        if (profile) {
-          customerEmail = profile.email;
-          customerName = `${profile.first_name} ${profile.last_name}`;
-        }
-      } else if (orderDetails.temp_user_id) {
-        const { data: tempUser } = await supabase
-          .from('temp_users')
-          .select('email, first_name, last_name')
-          .eq('temp_user_id', orderDetails.temp_user_id)
-          .single();
+    if (profile) {
+      customerEmail = profile.email;
+      customerName = `${profile.first_name} ${profile.last_name}`;
+    }
+  } else if (orderDetails.temp_user_id) {
+    const { data: tempUser } = await supabase
+      .from('temp_users')
+      .select('email, first_name, last_name')
+      .eq('temp_user_id', orderDetails.temp_user_id)
+      .single();
 
-        if (tempUser) {
-          customerEmail = tempUser.email;
-          customerName = `${tempUser.first_name} ${tempUser.last_name}`;
-        }
-      }
+    if (tempUser) {
+      customerEmail = tempUser.email;
+      customerName = `${tempUser.first_name} ${tempUser.last_name}`;
+    }
+  }
 
-      if (!customerEmail || !customerName) {
-        throw new Error('Customer details not found');
-      }
+  if (!customerEmail || !customerName) {
+    throw new Error('Customer details not found');
+  }
 
+  // Send appropriate email based on status
+  try {
+    if (newStatus === 'shipped' && trackingNumber && trackingCompany) {
       console.log('Sending shipping email to:', customerEmail);
-
-      console.log('Preparing to send shipping email:', {
+      await sendEmail({
         to: customerEmail,
-        orderNumber: orderDetails.order_number,
-        trackingCompany,
-        trackingNumber,
+        subject: `Your Order #${orderDetails.order_number} Has Been Shipped!`,
+        html: generateShippingEmail({
+          firstName: customerName,
+          orderNumber: orderDetails.order_number,
+          trackingCompany,
+          trackingNumber,
+        }),
       });
-
-      try {
-        const emailResult = await sendEmail({
-          to: customerEmail,
-          subject: `Your Order #${orderDetails.order_number} Has Been Shipped!`,
-          html: generateShippingEmail({
-            firstName: customerName,
-            orderNumber: orderDetails.order_number,
-            trackingCompany,
-            trackingNumber,
-          }),
-        });
-
-        console.log('Email sending result:', emailResult);
-      } catch (emailError) {
-        console.error('Failed to send shipping email:', emailError);
-        // Log more details about the error
-        if (emailError instanceof Error) {
-          console.error('Error details:', {
-            message: emailError.message,
-            stack: emailError.stack,
-          });
-        }
-      }
-    } catch (emailError) {
-      console.error('Failed to send shipping email:', emailError);
+    } else if (newStatus === 'delivered') {
+      console.log('Sending delivery email to:', customerEmail);
+      await sendEmail({
+        to: customerEmail,
+        subject: `Your Order #${orderDetails.order_number} Has Been Delivered!`,
+        html: generateDeliveryEmail({
+          firstName: customerName,
+          orderNumber: orderDetails.order_number,
+        }),
+      });
+    }
+  } catch (emailError) {
+    console.error('Failed to send email:', emailError);
+    if (emailError instanceof Error) {
+      console.error('Error details:', {
+        message: emailError.message,
+        stack: emailError.stack,
+      });
     }
   }
 
