@@ -3,7 +3,10 @@
 import { createClient } from '@/app/utils/supabase/server';
 import { getSession } from '../session';
 import { sendEmail } from '@/app/utils/email';
-import { generateOrderConfirmationEmail } from '@/app/utils/emailTemplates';
+import {
+  generateOrderConfirmationEmail,
+  generateShippingEmail,
+} from '@/app/utils/emailTemplates';
 
 export async function createOrderAction(formData: FormData) {
   const paymentId = formData.get('paymentId') as string;
@@ -119,7 +122,7 @@ export async function createOrderAction(formData: FormData) {
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .insert([orderData])
-    .select('order_id')
+    .select('order_id, order_number')
     .single();
 
   if (orderError) return { error: orderError.message };
@@ -159,10 +162,11 @@ export async function createOrderAction(formData: FormData) {
   try {
     await sendEmail({
       to: customerDetails.email,
-      subject: 'Order Confirmation - Chef Cella',
+      subject: `Order Confirmation #${order.order_number} - Chef Cella`,
       html: generateOrderConfirmationEmail({
         firstName: customerDetails.firstName,
         lastName: customerDetails.lastName,
+        orderNumber: order.order_number,
         orderItems: cartItems,
         address: {
           street_address: address.street_address,
@@ -183,6 +187,7 @@ export async function createOrderAction(formData: FormData) {
   return {
     message: 'Order created successfully',
     orderItems: cartItems,
+    orderNumber: order.order_number,
     customerDetails: {
       ...customerDetails,
       address: {
@@ -195,4 +200,152 @@ export async function createOrderAction(formData: FormData) {
       },
     },
   };
+}
+
+export async function updateOrderStatus(
+  orderId: string,
+  newStatus: string,
+  trackingNumber?: string,
+  trackingCompany?: string
+) {
+  const supabase = await createClient();
+
+  console.log('Updating order status with data:', {
+    orderId,
+    newStatus,
+    trackingNumber,
+    trackingCompany,
+  });
+
+  const updateData: {
+    status: string;
+    tracking_number?: string;
+    tracking_company?: string;
+  } = { status: newStatus };
+
+  // Only add tracking info if both are provided
+  if (trackingNumber && trackingCompany) {
+    updateData.tracking_number = trackingNumber;
+    updateData.tracking_company = trackingCompany;
+  }
+
+  console.log('Update data being sent to Supabase:', updateData);
+
+  const { data, error } = await supabase
+    .from('orders')
+    .update(updateData)
+    .eq('order_id', orderId)
+    .select('order_id, status, order_number, tracking_number, tracking_company')
+    .single();
+
+  if (error) {
+    console.error('Error updating order status:', error);
+    return { error: error.message };
+  }
+
+  console.log('Order status updated successfully:', data);
+
+  // If status is shipped and we have tracking info, send shipping email
+  if (newStatus === 'shipped' && trackingNumber && trackingCompany) {
+    try {
+      // First get the order with profile or temp_user info
+      const { data: orderDetails, error: orderError } = await supabase
+        .from('orders')
+        .select(
+          `
+          order_id,
+          order_number,
+          profile_id,
+          temp_user_id,
+          shipping_address_id,
+          addresses!shipping_address_id (
+            street_address,
+            street_address_2,
+            city,
+            state,
+            postal_code,
+            country
+          )
+        `
+        )
+        .eq('order_id', orderId)
+        .single();
+
+      if (orderError) {
+        console.error('Error fetching order details:', orderError);
+        throw orderError;
+      }
+
+      if (!orderDetails) {
+        throw new Error('Order details not found');
+      }
+
+      // Then get the customer details based on whether it's a profile or temp_user
+      let customerEmail, customerName;
+      if (orderDetails.profile_id) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('email, first_name, last_name')
+          .eq('profile_id', orderDetails.profile_id)
+          .single();
+
+        if (profile) {
+          customerEmail = profile.email;
+          customerName = `${profile.first_name} ${profile.last_name}`;
+        }
+      } else if (orderDetails.temp_user_id) {
+        const { data: tempUser } = await supabase
+          .from('temp_users')
+          .select('email, first_name, last_name')
+          .eq('temp_user_id', orderDetails.temp_user_id)
+          .single();
+
+        if (tempUser) {
+          customerEmail = tempUser.email;
+          customerName = `${tempUser.first_name} ${tempUser.last_name}`;
+        }
+      }
+
+      if (!customerEmail || !customerName) {
+        throw new Error('Customer details not found');
+      }
+
+      console.log('Sending shipping email to:', customerEmail);
+
+      console.log('Preparing to send shipping email:', {
+        to: customerEmail,
+        orderNumber: orderDetails.order_number,
+        trackingCompany,
+        trackingNumber,
+      });
+
+      try {
+        const emailResult = await sendEmail({
+          to: customerEmail,
+          subject: `Your Order #${orderDetails.order_number} Has Been Shipped!`,
+          html: generateShippingEmail({
+            firstName: customerName,
+            orderNumber: orderDetails.order_number,
+            trackingCompany,
+            trackingNumber,
+          }),
+        });
+
+        console.log('Email sending result:', emailResult);
+      } catch (emailError) {
+        console.error('Failed to send shipping email:', emailError);
+        // Log more details about the error
+        if (emailError instanceof Error) {
+          console.error('Error details:', {
+            message: emailError.message,
+            stack: emailError.stack,
+          });
+        }
+      }
+    } catch (emailError) {
+      console.error('Failed to send shipping email:', emailError);
+    }
+  }
+
+  return { success: true, data };
 }

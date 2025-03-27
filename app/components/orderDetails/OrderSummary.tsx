@@ -44,6 +44,7 @@ export default function OrderSummary({
       country: string;
     };
   } | null>(null);
+  const [orderNumber, setOrderNumber] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -113,6 +114,10 @@ export default function OrderSummary({
           setCustomerDetails(data.customerDetails);
         }
 
+        if (data.orderNumber) {
+          setOrderNumber(data.orderNumber);
+        }
+
         // Clear cookies after successful order
         Cookies.remove('cartId');
         Cookies.remove('shippingAddressId');
@@ -137,7 +142,7 @@ export default function OrderSummary({
     return (
       <div className='flex items-center justify-center'>
         <div
-          className='inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white'
+          className='inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite]'
           role='status'
         >
           <span className='!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]'>
@@ -159,6 +164,20 @@ export default function OrderSummary({
 
   return (
     <div className='mt-10 text-left space-y-8'>
+      {/* Order Number Section */}
+      {orderNumber && (
+        <div className='bg-white/10 p-6 rounded-lg'>
+          <h3 className='text-2xl font-bold mb-4'>Order Confirmation</h3>
+          <p className='text-lg'>
+            Your order number is:{' '}
+            <span className='font-bold'>#{orderNumber}</span>
+          </p>
+          <p className='text-sm text-gray-600 mt-2'>
+            Please keep this number for your records
+          </p>
+        </div>
+      )}
+
       {/* Customer Details Section */}
       {customerDetails && (
         <div className='p-6 rounded-lg'>

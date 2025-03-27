@@ -10,7 +10,7 @@ export default async function QuickAddProduct({ user }: QuickAddProductProps) {
   }
 
   return (
-    <div className='ml-12 p-4 border border-slate-300 shadow-xl shadow-slate-400 rounded-2xl'>
+    <div className='w-1/4 ml-12 p-4 border border-slate-300 shadow-xl shadow-slate-400 rounded-2xl'>
       <QuickAddProductButton />
     </div>
   );

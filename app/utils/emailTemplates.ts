@@ -1,6 +1,7 @@
 interface OrderEmailData {
   firstName: string;
   lastName: string;
+  orderNumber: number;
   orderItems: Array<{
     products: {
       product_name: string;
@@ -23,7 +24,8 @@ interface OrderEmailData {
 }
 
 export function generateOrderConfirmationEmail(data: OrderEmailData) {
-  const { firstName, lastName, orderItems, address, totalAmount } = data;
+  const { firstName, lastName, orderNumber, orderItems, address, totalAmount } =
+    data;
 
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -31,6 +33,7 @@ export function generateOrderConfirmationEmail(data: OrderEmailData) {
       
       <div style="margin: 20px 0;">
         <h2 style="color: #666;">Order Details</h2>
+        <p>Order Number: <strong>#${orderNumber}</strong></p>
         <p>Order Date: ${new Date().toLocaleDateString()}</p>
       </div>
 
@@ -68,6 +71,38 @@ export function generateOrderConfirmationEmail(data: OrderEmailData) {
 
       <div style="margin: 20px 0; padding: 20px; background-color: #f9f9f9;">
         <p>We'll send you shipping updates as soon as your order is processed.</p>
+      </div>
+    </div>
+  `;
+}
+
+export function generateShippingEmail({
+  firstName,
+  orderNumber,
+  trackingCompany,
+  trackingNumber,
+}: {
+  firstName: string;
+  orderNumber: number;
+  trackingCompany: string;
+  trackingNumber: string;
+}) {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1 style="color: #333; text-align: center;">Your Order Has Been Shipped!</h1>
+      <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+        <p style="font-size: 16px;">Hi ${firstName},</p>
+        <p style="font-size: 16px;">Great news! Your order #${orderNumber} has been shipped.</p>
+        <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
+          <h2 style="color: #666; margin-bottom: 10px;">Tracking Information</h2>
+          <p style="font-weight: bold;">Company: ${trackingCompany}</p>
+          <p style="font-weight: bold;">Tracking Number: ${trackingNumber}</p>
+          <p>You can track your package using the tracking number above.</p>
+        </div>
+        <p style="color: #666;">Thank you for shopping with Chef Cella!</p>
+      </div>
+      <div style="text-align: center; color: #666; font-size: 12px; margin-top: 20px;">
+        <p>This is an automated message, please do not reply.</p>
       </div>
     </div>
   `;

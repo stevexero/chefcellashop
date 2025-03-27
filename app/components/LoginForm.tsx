@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { SubmitButton } from '../ui/submit-button';
 import { FormMessage } from '../ui/form-message';
 import { signInAction } from '../lib/actions/actions';
@@ -50,12 +50,12 @@ const LoginForm = (props: {
       onSubmit={handleSubmit}
     >
       <h1 className='text-2xl font-medium'>Sign in</h1>
-      <p className='text-sm text-foreground mt-2'>
+      {/* <p className='text-sm text-foreground mt-2'>
         Don&apos;t have an account?{' '}
         <Link className='text-foreground font-medium underline' href='/sign-up'>
           Sign up
         </Link>
-      </p>
+      </p> */}
       <div className='mt-4'>
         <FormMessage message={msgObj} />
       </div>
@@ -73,12 +73,12 @@ const LoginForm = (props: {
           <label htmlFor='password' className='text-sm'>
             Password
           </label>
-          <Link
+          {/* <Link
             className='text-xs text-foreground underline'
             href='/forgot-password'
           >
             Forgot Password?
-          </Link>
+          </Link> */}
         </div>
         <input
           type='password'

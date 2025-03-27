@@ -27,32 +27,33 @@ const Navbar = async ({ user }: NavbarProps) => {
       <div className='w-full grid grid-cols-3 justify-items-center items-center p-2 border-b border-b-slate-300 text-center'>
         <div></div>
         <p>All orders processed and shipped the same day!</p>
-        {user ? (
-          <form action={signOutAction}>
-            <Button type='submit' variant={'outline'} className='text-black'>
-              Sign out
-            </Button>
-          </form>
-        ) : (
-          <div className='flex gap-2'>
-            <Button
-              asChild
-              size='sm'
-              variant={'outline'}
-              className='text-black'
-            >
-              <Link href='/sign-in'>Sign in</Link>
-            </Button>
-            <Button
-              asChild
-              size='sm'
-              variant={'default'}
-              className='text-black'
-            >
-              <Link href='/sign-up'>Sign up</Link>
-            </Button>
-          </div>
-        )}
+        {
+          user ? (
+            <form action={signOutAction}>
+              <Button type='submit' variant={'outline'} className='text-black'>
+                Sign out
+              </Button>
+            </form>
+          ) : null
+          // <div className='flex gap-2'>
+          //   <Button
+          //     asChild
+          //     size='sm'
+          //     variant={'outline'}
+          //     className='text-black'
+          //   >
+          //     <Link href='/sign-in'>Sign in</Link>
+          //   </Button>
+          //   <Button
+          //     asChild
+          //     size='sm'
+          //     variant={'default'}
+          //     className='text-black'
+          //   >
+          //     <Link href='/sign-up'>Sign up</Link>
+          //   </Button>
+          // </div>
+        }
       </div>
     </div>
   );
