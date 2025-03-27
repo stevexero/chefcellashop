@@ -64,10 +64,10 @@ export default function ProductImages({ product }: ProductProps) {
           width={700}
           height={700}
           alt={product.product_name}
-          className='max-w-[600px] max-h-[600px] object-contain'
+          className='max-w-[300px] md:max-w-[600px] max-h-[300px] md:max-h-[600px] object-contain'
         />
       ) : (
-        <div className='max-w-[600px] max-h-[600px] bg-gray-200 flex items-center justify-center'>
+        <div className='max-w-[300px] md:max-w-[600px] max-h-[300px] md:max-h-[600px] bg-gray-200 flex items-center justify-center'>
           <span>No Image</span>
         </div>
       )}

@@ -34,7 +34,7 @@ const TopNavLinks = () => {
 
   return (
     <div className='text-white flex flex-row items-center'>
-      <Link href='/products' className='button-85 mr-16'>
+      <Link href='/products' className='hidden md:block button-85 mr-16'>
         Shop
       </Link>
       <div

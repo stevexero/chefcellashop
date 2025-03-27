@@ -40,21 +40,23 @@ export default function SizeSelector({ sizes, basePrice }: SizeSelectorProps) {
   };
 
   return (
-    <>
-      <div className='mt-4 flex'>
-        <span className='font-bold'>Size:</span>
+    <div className='border rounded-md md:border-none md:rounded-none p-2 mt-4 flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start'>
+      <div className='mt-0 md:mt-4 flex'>
+        <span className='font-bold text-xs md:text-base'>Size:</span>
         {sizes?.length > 0 ? (
-          <p className='ml-2'>{sizeName || 'Select a size'}</p>
+          <p className='ml-2 text-xs md:text-base'>
+            {sizeName || 'Select a size'}
+          </p>
         ) : (
-          <p className='ml-2'>One Size</p>
+          <p className='ml-2 text-xs md:text-base'>One Size</p>
         )}
       </div>
-      <div className='mt-2 inline-flex flex-row border-2 border-slate-700'>
+      <div className='mt-0 md:mt-2 inline-flex flex-row border-2 border-slate-700'>
         {sizes && sizes.length > 0
           ? sizes.map((productSize) => (
               <div
                 key={productSize.size_id}
-                className={`w-12 h-12 flex items-center justify-center cursor-pointer hover:bg-slate-700 hover:text-white ${
+                className={`w-8 md:w-12 h-8 md:h-12 text-xs md:text-base flex items-center justify-center cursor-pointer hover:bg-slate-700 hover:text-white ${
                   selectedSize === productSize.size_id
                     ? 'bg-slate-700 text-white'
                     : ''
@@ -66,6 +68,6 @@ export default function SizeSelector({ sizes, basePrice }: SizeSelectorProps) {
             ))
           : null}
       </div>
-    </>
+    </div>
   );
 }

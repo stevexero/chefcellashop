@@ -85,7 +85,9 @@ export default function CartDetails() {
                 <BiArrowToLeft />
                 &nbsp;Continue Shopping
               </Link>
-              <h1 className='text-2xl font-bold text-center'>Cart</h1>
+              <h1 className='hidden md:block text-2xl font-bold text-center'>
+                Cart
+              </h1>
               <p className='text-sm text-slate-500'>
                 {cartItems.length} items in cart
               </p>

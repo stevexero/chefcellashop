@@ -6,7 +6,7 @@ interface ProductNameProps {
 
 export default function ProductName({ productName }: ProductNameProps) {
   return (
-    <p className='mt-4 font-bold text-2xl'>
+    <p className='mt-4 font-bold text-xl md:text-2xl'>
       {(productName || '').replaceAll('-', ' ').toUpperCase()}
     </p>
   );

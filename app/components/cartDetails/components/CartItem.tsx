@@ -60,30 +60,30 @@ export default function CartModalItem({
 
   return (
     <div className='border-b py-2 flex flex-row items-start'>
-      <div className='pr-4'>
+      <div className='pr-2 md:pr-4'>
         <Image
           src={selectedImage}
           width={200}
           height={200}
           alt={item.products[0]?.product_name || 'Unknown Product'}
-          className='max-w-[300px] max-h-[300px] object-contain'
+          className='max-w-[100px] md:max-w-[300px] max-h-[100px] md:max-h-[300px] object-contain'
         />
       </div>
-      <div className='w-full flex flex-col mt-8'>
-        <p className='font-bold text-xl'>
+      <div className='w-1/2 md:w-full flex flex-col mt-8'>
+        <p className='font-bold text-sm md:text-xl'>
           {item.products[0]?.product_name.replaceAll('-', ' ').toUpperCase() ||
             'Unknown Product'}
         </p>
-        <div className='w-full flex flex-row items-center justify-between mt-4'>
+        <div className='w-full flex flex-col md:flex-row items-start md:items-center justify-between mt-4'>
           <div className='font-semibold mt-2'>
-            <div className='w-72 grid grid-cols-3 gap-2'>
+            <div className='md:w-72 text-xs md:text-base grid grid-cols-1 md:grid-cols-3 gap-2'>
               <p>{item.sizes?.[0]?.size || 'N/A'}</p>
               <p>{item.colors?.[0]?.color_name || 'N/A'}</p>
               <p>${item.price.toFixed(2)}</p>
             </div>
           </div>
           <div className='flex flex-row items-center gap-2'>
-            <div className='flex flex-row items-center border border-slate-700'>
+            <div className='text-xs md:text-base flex flex-row items-center border border-slate-700'>
               <button
                 className='cursor-pointer bg-slate-700 text-white p-2'
                 onClick={handleDecrement}
@@ -107,15 +107,17 @@ export default function CartModalItem({
               </button>
             )}
           </div>
-          <p className='font-bold text-xl'>
-            ${(item.price * item.quantity).toFixed(2)}
-          </p>
-          <button
-            className='ml-4 text-red-500 hover:text-red-700 cursor-pointer'
-            onClick={() => removeItemFromCart(item.cart_item_id)}
-          >
-            <BiTrash size={24} />
-          </button>
+          <div className='mt-4 md:mt-0 flex flex-row md:flex-col items-center md:items-end gap-2'>
+            <p className='font-bold text-sm md:text-xl'>
+              ${(item.price * item.quantity).toFixed(2)}
+            </p>
+            <button
+              className='ml-4 text-red-500 hover:text-red-700 cursor-pointer'
+              onClick={() => removeItemFromCart(item.cart_item_id)}
+            >
+              <BiTrash size={24} />
+            </button>
+          </div>
         </div>
       </div>
     </div>

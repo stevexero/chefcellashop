@@ -5,5 +5,9 @@ interface CategoryProps {
 }
 
 export default function Category({ productCategory }: CategoryProps) {
-  return <p>{(productCategory || 'Uncategorized').toUpperCase()}</p>;
+  return (
+    <p className='text-xs md:text-base'>
+      {(productCategory || 'Uncategorized').toUpperCase()}
+    </p>
+  );
 }

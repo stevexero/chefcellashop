@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Navbar from './ui/navigation/navbar';
+import Navbar from './components/navbar/navbar';
 import UserModal from './components/UserModal';
 import { createClient } from './utils/supabase/server';
 import AddProductModal from './components/addProduct/components/AddProductModal';

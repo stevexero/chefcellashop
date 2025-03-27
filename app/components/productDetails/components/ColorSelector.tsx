@@ -32,12 +32,12 @@ export default function ColorSelector({ colors }: ColorSelectorProps) {
   }, [colors, initializeColor]);
 
   return (
-    <div className='mt-4'>
-      <p>
+    <div className='border rounded-md md:border-none md:rounded-none p-2 mt-4 flex flex-row items-center justify-between md:flex-col md:items-start md:justify-start'>
+      <p className='text-xs md:text-base'>
         <span className='font-bold'>COLOR:&nbsp;</span>
         {selectedColorName || 'N/A'}
       </p>
-      <div className='flex gap-2 mt-2'>
+      <div className='flex gap-2 mt-0 md:mt-2'>
         {colors.map(({ color }) => (
           <button
             key={color.color_id}

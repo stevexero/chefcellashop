@@ -185,8 +185,10 @@ export default function OrderSummary({
             Shipping updates will be sent to{' '}
             <span className='font-bold'>{customerDetails.email}</span>
           </p>
-          <h3 className='text-2xl font-bold mb-4'>Customer Details</h3>
-          <div className='grid grid-cols-2 gap-4'>
+          <h3 className='text-sm md:text-2xl font-bold mb-4'>
+            Customer Details
+          </h3>
+          <div className='md:grid md:grid-cols-2 md:gap-4'>
             <div>
               <p className='font-semibold'>Name</p>
               <p>{`${customerDetails.firstName} ${customerDetails.lastName}`}</p>

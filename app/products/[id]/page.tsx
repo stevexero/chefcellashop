@@ -15,13 +15,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   }
 
   return (
-    <main className='w-full flex flex-row items-start mt-8'>
-      <div className='w-1/2 flex items-center justify-center'>
+    <main className='w-full flex flex-col md:flex-row items-start mt-8'>
+      <div className='w-full md:w-1/2 flex items-center justify-center'>
         <Suspense>
           <ProductImages product={product} />
         </Suspense>
       </div>
-      <div className='w-1/2 px-8'>
+      <div className='w-full md:w-1/2 px-8'>
         <Suspense>
           <ProductDetails product={product} />
         </Suspense>
