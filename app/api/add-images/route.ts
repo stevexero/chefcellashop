@@ -1,4 +1,4 @@
-import { addImagesAction } from '@/app/lib/actions';
+import { addImagesAction } from '@/app/lib/actions/actions';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {

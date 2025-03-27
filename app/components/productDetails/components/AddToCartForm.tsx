@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useStore } from '../store';
 import { useClientStore } from '@/app/store/clientStore';
+import Cookies from 'js-cookie';
 
 interface AddItemToCartProps {
   productId: string;
@@ -15,7 +16,7 @@ export default function AddToCartForm({
 }: AddItemToCartProps) {
   const { quantity, selectedColorId, selectedSize, setSelectedSize } =
     useStore();
-  const { toggleModal } = useClientStore();
+  const { toggleModal, setCartItems } = useClientStore();
 
   const [isPending, setIsPending] = useState(false);
 
@@ -32,7 +33,6 @@ export default function AddToCartForm({
     formData.append('quantity', quantity.toString());
 
     try {
-      // console.log(selectedSize);
       const response = await fetch('/api/add-to-cart', {
         method: 'POST',
         body: formData,
@@ -43,25 +43,27 @@ export default function AddToCartForm({
         throw new Error('Failed to add item to cart');
       }
 
-      // console.log('Added to cart:', {
-      //   productId,
-      //   selectedSize,
-      //   selectedColorId,
-      //   quantity,
-      // });
+      const result = await response.json();
+      console.log('//////////// result ////////////', result);
+
+      // Set the cartId cookie if it exists in the result
+      if (result.cartId) {
+        Cookies.set('cartId', result.cartId);
+      }
+
+      const cartResponse = await fetch('/api/get-cart');
+      const { items } = await cartResponse.json();
+
+      setCartItems(items);
     } catch (error) {
       console.error('Error adding to cart:', error);
     } finally {
       setIsPending(false);
-      // setSelectedSize('');
-      //   setSelectedColorId('');
-      // setQuantity(1);
       toggleModal('cart');
     }
   };
 
   useEffect(() => {
-    // Resets selectedSize to empty string if oneSize product
     if (isOneSize) {
       setSelectedSize('');
     }

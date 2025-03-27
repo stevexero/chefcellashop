@@ -9,7 +9,6 @@ import ProductPrice from './components/ProductPrice';
 import ProductColors from './components/ProductColors';
 import ProductSizes from './components/ProductSizes';
 import { useStore } from './store';
-// import { useEffect } from 'react';
 
 interface Category {
   category_id: string;
@@ -46,10 +45,6 @@ interface ProductDetailsProps {
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
   const { adjustedPrice } = useStore();
-
-  // useEffect(() => {
-  //   console.log(product);
-  // }, [product]);
 
   return (
     <>

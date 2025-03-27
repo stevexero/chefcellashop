@@ -2,7 +2,7 @@ import Image from 'next/image';
 import TopNavLinks from './top-nav-links';
 import Link from 'next/link';
 import { Button } from '../components/button';
-import { signOutAction } from '@/app/lib/actions';
+import { signOutAction } from '@/app/lib/actions/actions';
 import { User } from '@supabase/supabase-js';
 
 interface NavbarProps {

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { FormMessage } from '../ui/form-message';
 import { SubmitButton } from '../ui/submit-button';
-import { signUpAction } from '../lib/actions';
+import { signUpAction } from '../lib/actions/actions';
 
 export default function SignUpForm(props: {
   searchParams: { message?: string; error?: string; success?: string };

@@ -1,0 +1,54 @@
+.step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 1.5rem;
+  right: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #e5e7eb;
+  z-index: 1;
+}
+
+.step.active:not(:last-child)::after {
+  background-color: #000;
+}
+
+.step-number {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.5rem;
+  font-weight: bold;
+  position: relative;
+  z-index: 2;
+}
+
+.step.active .step-number {
+  background-color: #000;
+  color: white;
+}
+
+.step-title {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.step.active .step-title {
+  color: #000;
+  font-weight: 500;
+}
+
+.step-content {
+  margin-top: 2rem;
+}

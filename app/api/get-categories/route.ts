@@ -1,4 +1,4 @@
-import { fetchCategories } from '@/app/lib/data';
+import { fetchCategories } from '@/app/lib/data/data';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

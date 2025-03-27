@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { CartItem } from '@/app/types/types';
 
 type ModalType = 'user' | 'cart' | 'add-product-modal' | null;
 
@@ -14,6 +15,9 @@ interface ClientStoreState {
 
   categoryId: string;
   setCategoryId: (val: string) => void;
+
+  cartItems: CartItem[];
+  setCartItems: (items: CartItem[]) => void;
 }
 
 export const useClientStore = create<ClientStoreState>((set) => ({
@@ -29,4 +33,7 @@ export const useClientStore = create<ClientStoreState>((set) => ({
 
   categoryId: 'select-category',
   setCategoryId: (val: string) => set({ categoryId: val }),
+
+  cartItems: [],
+  setCartItems: (items: CartItem[]) => set({ cartItems: items }),
 }));

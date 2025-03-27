@@ -1,27 +1,18 @@
-import { createClient } from '@/app/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import { checkAuth } from '@/app/utils/auth';
 import ProfileCard from '../components/ProfileCard';
 import { Suspense } from 'react';
-import QuickAddProduct from '../components/QuickAddProduct';
+import QuickAddProduct from '../components/addProduct/QuickAddProduct';
 
 export default async function Dashboard() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect('/sign-in');
-  }
+  const user = await checkAuth();
 
   return (
     <div className='w-full flex justify-center mt-12'>
-      <Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
         <ProfileCard user={user} />
       </Suspense>
       <div className='flex flex-col'>
-        <Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
           <QuickAddProduct user={user} />
         </Suspense>
       </div>

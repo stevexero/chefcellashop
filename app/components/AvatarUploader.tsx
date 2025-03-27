@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { uploadAvatarImage } from '@/app/lib/actions';
+import { uploadAvatarImage } from '@/app/lib/actions/actions';
 
 interface AvatarUploaderProps {
   userId: string;

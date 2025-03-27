@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useClientStore } from '@/app/store/clientStore';
-import { signOutAction } from '../lib/actions';
+import { signOutAction } from '../lib/actions/actions';
 import Link from 'next/link';
 import { User } from '@supabase/supabase-js';
 import { FaTimes } from 'react-icons/fa';

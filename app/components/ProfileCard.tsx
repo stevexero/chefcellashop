@@ -1,5 +1,5 @@
 import { User } from '@supabase/supabase-js';
-import { fetchUserProfileByUserId } from '../lib/data';
+import { fetchUserProfileByUserId } from '../lib/data/data';
 import Image from 'next/image';
 import AvatarUploader from './AvatarUploader';
 import ProfileUpdateForm from './ProfileUpdateForm';

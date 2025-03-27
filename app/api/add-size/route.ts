@@ -1,4 +1,4 @@
-import { addSizeAction } from '@/app/lib/actions';
+import { addSizeAction } from '@/app/lib/actions/actions';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {

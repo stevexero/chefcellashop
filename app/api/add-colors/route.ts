@@ -1,4 +1,4 @@
-import { addColorsAction } from '@/app/lib/actions';
+import { addColorsAction } from '@/app/lib/actions/actions';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {

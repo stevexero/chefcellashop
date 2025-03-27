@@ -1,5 +1,6 @@
 import { createClient } from '@/app/utils/supabase/server';
 import { NextResponse } from 'next/server';
+import { mergeGuestCart } from '@/app/lib/actions/actions';
 
 export async function GET(request: Request) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
@@ -8,17 +9,23 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
   const origin = requestUrl.origin;
-  const redirectTo = requestUrl.searchParams.get('redirect_to')?.toString();
+  // const redirectTo = requestUrl.searchParams.get('redirect_to')?.toString();
+  const redirectTo =
+    requestUrl.searchParams.get('redirect_to')?.toString() || '/dashboard';
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      // Merge guest cart after successful auth
+      await mergeGuestCart();
+    }
   }
 
-  if (redirectTo) {
-    return NextResponse.redirect(`${origin}${redirectTo}`);
-  }
+  // if (redirectTo) {
+  return NextResponse.redirect(`${origin}${redirectTo}`);
+  // }
 
   // URL to redirect to after sign up process completes
-  return NextResponse.redirect(`${origin}/dashboard`);
+  // return NextResponse.redirect(`${origin}/dashboard`);
 }

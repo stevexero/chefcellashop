@@ -4,23 +4,31 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { SubmitButton } from '../ui/submit-button';
 import { FormMessage } from '../ui/form-message';
-import { signInAction } from '../lib/actions';
+import { signInAction } from '../lib/actions/actions';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const LoginForm = (props: {
   searchParams: { message?: string; error?: string; success?: string };
 }) => {
   const { message, error, success } = props.searchParams;
   const [formError, setFormError] = useState<string | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/dashboard';
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    formData.append('redirect', redirect);
 
     setFormError(null);
+    console.log('****** formData ******', formData);
 
-    await signInAction(formData);
+    // await signInAction(formData);
+    const result = await signInAction(formData);
+    if (!result) router.push(redirect);
   };
 
   let msgObj;

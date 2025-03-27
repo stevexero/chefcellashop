@@ -1,4 +1,4 @@
-import { fetchProductById } from '@/app/lib/data';
+import { fetchProductById } from '@/app/lib/data/data';
 import { notFound } from 'next/navigation';
 import ProductDetails from '@/app/components/productDetails/ProductDetails';
 import ProductImages from '@/app/components/productDetails/components/ProductImages';
