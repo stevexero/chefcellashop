@@ -153,7 +153,7 @@ export default function OrderDetails({
   };
 
   return (
-    <div className='space-y-8'>
+    <div className='md:space-y-8'>
       {/* Order Header */}
       <div className='text-center'>
         <h1 className='text-4xl font-extrabold mb-2'>Order Details</h1>
@@ -261,7 +261,7 @@ export default function OrderDetails({
       {/* Customer Details */}
       <div className='bg-white/10 p-6 rounded-lg'>
         <h2 className='text-2xl font-bold mb-4'>Customer Information</h2>
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='flex flex-col md:grid md:grid-cols-2 md:gap-4'>
           <div>
             <p className='font-semibold'>Name</p>
             <p>{`${customerDetails.first_name} ${customerDetails.last_name}`}</p>
@@ -287,13 +287,13 @@ export default function OrderDetails({
       {/* Order Items */}
       <div>
         <h2 className='text-2xl font-bold mb-4'>Order Items</h2>
-        <div className='space-y-4'>
+        <div className='md:space-y-4'>
           {orderItems.map((item, index) => (
             <div
               key={index}
-              className='flex items-center gap-4 p-4 bg-white/10 rounded-lg'
+              className='flex items-center md:gap-4 p-4 bg-white/10 rounded-lg'
             >
-              <div className='relative w-20 h-20'>
+              <div className='relative w-10 h-10 md:w-20 md:h-20'>
                 <Image
                   src={item.products.product_images[0]?.image_url || '/NIA.jpg'}
                   alt={item.products.product_name}
