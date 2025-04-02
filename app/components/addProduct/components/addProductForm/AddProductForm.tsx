@@ -68,7 +68,6 @@ export default function AddProductForm() {
         body: formData,
       });
       const result = await res.json();
-      console.log('---------------------', result);
       if (result.message !== 'Product added successfully!') {
         setMessage(result.message);
         setLoadingStep('');
