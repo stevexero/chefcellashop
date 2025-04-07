@@ -20,6 +20,9 @@ export default function Home() {
         <Link href='/products' className='button-85 mt-8'>
           See all Products
         </Link>
+        <Link href='/track-order' className='mt-12 underline text-blue-500'>
+          Track Order
+        </Link>
       </main>
     </div>
   );

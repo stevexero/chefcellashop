@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { setSession } from '@/app/lib/session';
+import Cookies from 'js-cookie';
 
 interface ContactDetailsProps {
   onSubmit: (details: {
@@ -18,6 +19,20 @@ export default function ContactDetails({ onSubmit }: ContactDetailsProps) {
   const [lastName, setLastName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const customerEmail = Cookies.get('chefCellaCustomerEmail');
+    const customerFirstName = Cookies.get('chefCellaCustomerFirstName');
+    const customerLastName = Cookies.get('chefCellaCustomerLastName');
+
+    if (customerEmail) setEmail(customerEmail);
+    if (customerFirstName) setFirstName(customerFirstName);
+    if (customerLastName) setLastName(customerLastName);
+
+    console.log('customerEmail', customerEmail);
+    console.log('customerFirstName', customerFirstName);
+    console.log('customerLastName', customerLastName);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +57,16 @@ export default function ContactDetails({ onSubmit }: ContactDetailsProps) {
         throw new Error(data.error || 'Failed to create guest user');
       }
 
+      // Set cookies via server action
+      const cookieResponse = await fetch('/api/set-customer-cookies', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!cookieResponse.ok) {
+        throw new Error('Failed to set customer cookies');
+      }
+
       // Get current session to preserve cartId
       const sessionResponse = await fetch('/api/get-session');
       const sessionData = await sessionResponse.json();
@@ -49,7 +74,7 @@ export default function ContactDetails({ onSubmit }: ContactDetailsProps) {
       // Save tempUserId to session while preserving cartId
       await setSession({
         tempUserId: data.userId,
-        cartId: sessionData.cartId, // Preserve the existing cartId
+        cartId: sessionData.cartId,
       });
 
       // If successful, proceed to next step with user ID

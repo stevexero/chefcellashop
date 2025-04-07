@@ -1,25 +1,27 @@
 export * from './categories';
 export * from './colors';
+export * from './trackOrder';
 
+import { CartItem } from '@/app/types/types';
 import { createClient } from '../../utils/supabase/server';
 import { getSession } from '../session';
 
-interface ProductImage {
-  image_url: string;
-}
+// interface ProductImage {
+//   image_url: string;
+// }
 
-interface CartItem {
-  cart_item_id: string;
-  product_id: string;
-  size_id: string | null;
-  color_id: string | null;
-  quantity: number;
-  price: number;
-  products: { product_name: string }[];
-  sizes: { size: string }[] | null;
-  colors: { color_name: string }[] | null;
-  product_images: ProductImage[];
-}
+// interface CartItem {
+//   cart_item_id: string;
+//   product_id: string;
+//   size_id: string | null;
+//   color_id: string | null;
+//   quantity: number;
+//   price: number;
+//   products: { product_name: string }[];
+//   sizes: { size: string }[] | null;
+//   colors: { color_name: string }[] | null;
+//   product_images: ProductImage[];
+// }
 
 export async function fetchUser() {
   const supabase = await createClient();

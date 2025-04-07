@@ -1,7 +1,7 @@
 import { fetchProductById } from '@/app/lib/data/data';
 import { notFound } from 'next/navigation';
-import ProductDetails from '@/app/components/productDetails/ProductDetails';
-import ProductImages from '@/app/components/productDetails/components/ProductImages';
+import ProductDetails from '@/app/products/components/productDetails/ProductDetails';
+import ProductImages from '@/app/products/components/productDetails/ProductImages';
 import { Suspense } from 'react';
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
@@ -15,7 +15,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   }
 
   return (
-    <main className='w-full flex flex-col md:flex-row items-start mt-8'>
+    <main className='w-full flex flex-col md:flex-row items-start my-8'>
       <div className='w-full md:w-1/2 flex items-center justify-center'>
         <Suspense>
           <ProductImages product={product} />

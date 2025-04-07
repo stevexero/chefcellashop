@@ -1,14 +1,14 @@
 'use client';
 
-import AddToCartForm from './components/AddToCartForm';
-import QuantitySelector from './components/QuantitySelector';
-import Category from './components/Category';
-import ProductName from './components/ProductName';
-import ProductDescription from './components/ProductDescription';
-import ProductPrice from './components/ProductPrice';
-import ProductColors from './components/ProductColors';
-import ProductSizes from './components/ProductSizes';
-import { useStore } from './store';
+import AddToCartForm from '@/app/products/components/productDetails/AddToCartForm';
+import QuantitySelector from '@/app/products/components/productDetails/QuantitySelector';
+import Category from '@/app/products/components/productDetails/Category';
+import ProductName from '@/app/products/components/productDetails/ProductName';
+import ProductDescription from '@/app/products/components/productDetails/ProductDescription';
+import ProductPrice from '@/app/products/components/productDetails/ProductPrice';
+import ProductColors from '@/app/products/components/productDetails/ProductColors';
+import ProductSizes from '@/app/products/components/productDetails/ProductSizes';
+import { useStore } from '@/app/products/store';
 
 interface Category {
   category_id: string;

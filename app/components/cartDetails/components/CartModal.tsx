@@ -7,27 +7,13 @@ import Link from 'next/link';
 import CartModalItem from './CartModalItem';
 import { useStore } from '../store';
 
-// interface ProductImage {
-//   image_url: string;
-// }
-
-// interface CartItem {
-//   cart_item_id: string;
-//   product_id: string;
-//   size_id: string | null;
-//   color_id: string | null;
-//   quantity: number;
-//   price: number;
-//   products: { product_name: string; product_images: ProductImage[] }[];
-//   sizes: { size: string }[] | null;
-//   colors: { color_name: string }[] | null;
-// }
-
 const CartModal = () => {
   const { activeModal, toggleModal } = useClientStore();
   const { cartItems, setCartItems } = useStore();
-  const isOpen = activeModal === 'cart';
+
   const [loading, setLoading] = useState(false);
+
+  const isOpen = activeModal === 'cart';
 
   const fetchCartItems = useCallback(async () => {
     setLoading(true);
@@ -46,16 +32,6 @@ const CartModal = () => {
       setLoading(false);
     }
   }, [setCartItems]);
-
-  useEffect(() => {
-    console.log('fetchCartItems');
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      fetchCartItems();
-    } else {
-      document.body.style.overflow = '';
-    }
-  }, [isOpen, fetchCartItems]);
 
   const calculateTotal = () => {
     return cartItems
@@ -87,6 +63,16 @@ const CartModal = () => {
     console.log(data);
     fetchCartItems();
   };
+
+  useEffect(() => {
+    console.log('fetchCartItems');
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      fetchCartItems();
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isOpen, fetchCartItems]);
 
   return (
     <>

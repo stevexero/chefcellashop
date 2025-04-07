@@ -1,7 +1,7 @@
 'use client';
 
 import { BiMinus, BiPlus } from 'react-icons/bi';
-import { useStore } from '../store';
+import { useStore } from '../../store';
 import { useEffect } from 'react';
 
 const QuantitySelector = () => {

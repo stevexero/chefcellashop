@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useStore } from '../store';
+import { useStore } from '../../store';
 
 interface Size {
   size_id: string;

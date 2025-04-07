@@ -1,5 +1,9 @@
-import React from 'react';
+import TrackOrderForm from './components/TrackOrderForm';
 
 export default function OrderTracking() {
-  return <div>OrderTracking</div>;
+  return (
+    <main className='max-w-3xl mx-auto px-4 py-12'>
+      <TrackOrderForm />
+    </main>
+  );
 }

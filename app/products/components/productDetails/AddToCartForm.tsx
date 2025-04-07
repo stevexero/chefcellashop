@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useStore } from '../store';
+import { useStore } from '../../store';
 import { useClientStore } from '@/app/store/clientStore';
 import Cookies from 'js-cookie';
 
