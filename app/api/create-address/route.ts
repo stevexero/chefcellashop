@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createAddressAction } from '@/app/lib/actions/actions';
+import { createAddressAction } from '@/app/lib/actions/addresses';
 
 export async function POST(request: Request) {
   try {
