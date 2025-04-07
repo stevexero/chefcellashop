@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Cookies from 'js-cookie';
-import { createAddressAction } from '@/app/lib/actions/user';
+import { createAddressAction } from '@/app/lib/actions/addresses';
 
 interface ShippingAddressProps {
   onSubmit: (address: {
