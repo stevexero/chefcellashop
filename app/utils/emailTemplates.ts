@@ -11,6 +11,7 @@ interface OrderEmailData {
     colors: { color_name: string } | null;
     quantity: number;
     price: number;
+    selectedImage: string;
   }>;
   address: {
     street_address: string;
@@ -51,6 +52,9 @@ export function generateOrderConfirmationEmail(data: OrderEmailData) {
           .map(
             (item) => `
           <div style="margin: 10px 0; padding: 10px; border-bottom: 1px solid #eee;">
+            <img src="${item.selectedImage}" alt="${
+              item.products.product_name
+            }" style="max-width: 100px; margin-bottom: 10px;" />
             <p style="font-weight: bold;">${item.products.product_name
               .replaceAll('-', ' ')
               .toUpperCase()}</p>

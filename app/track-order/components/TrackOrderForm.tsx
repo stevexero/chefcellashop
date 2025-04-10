@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { trackOrder } from '@/app/lib/data/trackOrder';
+import OrderItem from './OrderItem';
 
 interface OrderDetails {
   orderNumber: string;
@@ -14,11 +15,14 @@ interface OrderDetails {
     last_name: string;
   };
   orderItems: Array<{
-    name: string;
+    products: {
+      product_images: { image_url: string; color_id: string }[];
+      product_name: string;
+    };
+    sizes: { size: string; size_id: string } | null;
+    colors: { color_name: string; color_id: string } | null;
     quantity: number;
-    base_price: number;
-    color: string;
-    size: string;
+    price: number;
   }>;
 }
 
@@ -109,17 +113,8 @@ export default function TrackOrderForm() {
           <div>
             <h3 className='text-xl font-semibold mb-2'>Order Items</h3>
             <div className='space-y-2'>
-              {orderDetails.orderItems.map((item) => (
-                <div key={item.name} className='border-b pb-2'>
-                  <p className='font-semibold'>
-                    {item.name.split(' ')[0].toUpperCase().replace('-', ' ')}
-                  </p>
-                  <p className='font-medium'>Quantity: {item.quantity}</p>
-                  <p>Color: {item.color}</p>
-                  <p>Size: {item.size}</p>
-                  <p>${item.base_price} each</p>
-                  <p>Total: ${(item.base_price * item.quantity).toFixed(2)}</p>
-                </div>
+              {orderDetails.orderItems.map((item, index) => (
+                <OrderItem key={index} item={item} />
               ))}
             </div>
           </div>

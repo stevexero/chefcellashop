@@ -1,4 +1,4 @@
-import OrderSummary from '@/app/components/orderDetails/OrderSummary';
+import OrderSummary from '@/app/payment-success/components/orderSummary/OrderSummary';
 import Link from 'next/link';
 import { Suspense } from 'react';
 

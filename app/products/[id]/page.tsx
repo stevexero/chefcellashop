@@ -1,4 +1,4 @@
-import { fetchProductById } from '@/app/lib/data/data';
+import { fetchProductById } from '@/app/lib/data/products';
 import { notFound } from 'next/navigation';
 import ProductDetails from '@/app/products/components/productDetails/ProductDetails';
 import ProductImages from '@/app/products/components/productDetails/ProductImages';
@@ -17,12 +17,12 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   return (
     <main className='w-full flex flex-col md:flex-row items-start my-8'>
       <div className='w-full md:w-1/2 flex items-center justify-center'>
-        <Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
           <ProductImages product={product} />
         </Suspense>
       </div>
       <div className='w-full md:w-1/2 px-8'>
-        <Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
           <ProductDetails product={product} />
         </Suspense>
       </div>

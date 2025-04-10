@@ -1,4 +1,4 @@
-import { fetchProducts } from '@/app/lib/data/data';
+import { fetchProducts } from '@/app/lib/data/products';
 import Image from 'next/image';
 import Link from 'next/link';
 

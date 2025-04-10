@@ -61,7 +61,7 @@ export default function CartDetails() {
     const data = await response.json();
     console.log(data);
     fetchCartItems();
-    resetItemQuantities(); // Reset quantities after successful update
+    resetItemQuantities();
   };
 
   useEffect(() => {

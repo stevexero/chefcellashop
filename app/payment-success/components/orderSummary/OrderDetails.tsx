@@ -31,10 +31,10 @@ interface OrderDetailsProps {
     price: number;
     products: {
       product_name: string;
-      product_images: { image_url: string }[];
+      product_images: { image_url: string; color_id: string }[];
     };
     sizes: { size: string } | null;
-    colors: { color_name: string } | null;
+    colors: { color_name: string; color_id: string } | null;
   }>;
 }
 
@@ -295,7 +295,13 @@ export default function OrderDetails({
             >
               <div className='relative w-10 h-10 md:w-20 md:h-20'>
                 <Image
-                  src={item.products.product_images[0]?.image_url || '/NIA.jpg'}
+                  src={
+                    item?.products?.product_images.find(
+                      (image) => image.color_id === item.colors?.color_id
+                    )?.image_url ||
+                    item?.products?.product_images[0]?.image_url ||
+                    '/NIA.jpg'
+                  }
                   alt={item.products.product_name}
                   fill
                   className='object-contain'

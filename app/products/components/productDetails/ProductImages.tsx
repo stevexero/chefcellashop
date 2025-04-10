@@ -1,60 +1,26 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
-
-interface ProductImage {
-  image_url: string;
-}
-
-interface Color {
-  color_id: string;
-  color_name: string;
-  color_hex_code: string;
-}
-
-interface Size {
-  size_id: string;
-  size: string;
-}
-
-interface ProductSize {
-  size_id: string;
-  price_mod: number;
-  size: Size;
-}
-
-interface Category {
-  category_id: string;
-  category_name: string;
-}
-
-interface Product {
-  product_id: string;
-  product_name: string;
-  base_price: number;
-  description?: string;
-  category_id: string;
-  product_images: ProductImage[];
-  product_colors: { color: Color }[];
-  product_sizes: ProductSize[];
-  categories: Category;
-}
-
-interface ProductProps {
-  product: Product;
-}
+import { useProductsStore } from '../../store';
+import { useEffect } from 'react';
+import { ProductProps } from '@/app/types/types';
 
 export default function ProductImages({ product }: ProductProps) {
-  const [selectedImage, setSelectedImage] = useState<string | null>(
-    product.product_images && product.product_images.length > 0
-      ? product.product_images[0].image_url
-      : null
-  );
+  const { selectedImage, setSelectedImage, selectedColorId } =
+    useProductsStore();
 
   const handleThumbnailClick = (imageUrl: string) => {
     setSelectedImage(imageUrl);
   };
+
+  useEffect(() => {
+    setSelectedImage(
+      product.product_images.find((image) => image.color_id === selectedColorId)
+        ?.image_url ||
+        product.product_images[0]?.image_url ||
+        ''
+    );
+  }, [product?.product_images, setSelectedImage, selectedColorId]);
 
   return (
     <div className='flex flex-col items-center'>
