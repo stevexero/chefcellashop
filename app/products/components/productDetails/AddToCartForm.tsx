@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useStore } from '../../store';
+import { useProductsStore } from '../../store';
 import { useClientStore } from '@/app/store/clientStore';
 import Cookies from 'js-cookie';
 
@@ -15,7 +15,7 @@ export default function AddToCartForm({
   isOneSize,
 }: AddItemToCartProps) {
   const { quantity, selectedColorId, selectedSize, setSelectedSize } =
-    useStore();
+    useProductsStore();
   const { toggleModal, setCartItems } = useClientStore();
 
   const [isPending, setIsPending] = useState(false);

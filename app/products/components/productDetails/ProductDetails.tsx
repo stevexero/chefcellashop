@@ -8,7 +8,7 @@ import ProductDescription from '@/app/products/components/productDetails/Product
 import ProductPrice from '@/app/products/components/productDetails/ProductPrice';
 import ProductColors from '@/app/products/components/productDetails/ProductColors';
 import ProductSizes from '@/app/products/components/productDetails/ProductSizes';
-import { useStore } from '@/app/products/store';
+import { useProductsStore } from '@/app/products/store';
 
 interface Category {
   category_id: string;
@@ -31,7 +31,7 @@ interface Product {
   product_name: string;
   base_price: number;
   description?: string;
-  product_images: { image_url: string }[];
+  product_images: { image_url: string; color_id: string }[];
   product_colors: {
     color: { color_id: string; color_name: string; color_hex_code: string };
   }[];
@@ -44,7 +44,7 @@ interface ProductDetailsProps {
 }
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
-  const { adjustedPrice } = useStore();
+  const { adjustedPrice } = useProductsStore();
 
   return (
     <>
@@ -60,7 +60,8 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             : adjustedPrice
         }
       />
-      <ProductColors colors={product.product_colors} />
+      {/* <ProductColors colors={product.product_colors} /> */}
+      <ProductColors product={product} />
       <ProductSizes
         sizes={product.product_sizes}
         basePrice={product.base_price}

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchCartItems } from '@/app/lib/data/data';
+import { fetchCartItems } from '@/app/lib/data/carts';
 
 export async function GET() {
   try {

@@ -1,5 +1,5 @@
 import { createClient } from '@/app/utils/supabase/server';
-import OrderDetails from '@/app/components/orderDetails/OrderDetails';
+import OrderDetails from '@/app/payment-success/components/orderSummary/OrderDetails';
 
 interface OrderPageProps {
   params: Promise<{

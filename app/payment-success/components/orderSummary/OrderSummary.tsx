@@ -1,22 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Cookies from 'js-cookie';
+import OrderItem from './OrderItem';
+import CustomerDetails from './CustomerDetails';
+import OrderNumber from './OrderNumber';
 
 interface OrderLineItem {
   order_item_id: string;
   product_id: string;
-  size_id: string | null;
-  color_id: string | null;
   quantity: number;
   price: number;
   products: {
     product_name: string;
-    product_images: { image_url: string }[];
+    product_images: { image_url: string; color_id: string }[];
   };
-  sizes: { size: string } | null;
-  colors: { color_name: string } | null;
+  sizes: { size: string; size_id: string } | null;
+  colors: { color_name: string; color_id: string } | null;
 }
 
 interface OrderSummaryProps {
@@ -25,31 +25,45 @@ interface OrderSummaryProps {
   redirectStatus: string;
 }
 
+interface CustomerDetailsProps {
+  email: string;
+  firstName: string;
+  lastName: string;
+  address: {
+    street_address: string;
+    street_address_2: string;
+    city: string;
+    state: string;
+    postal_code: string;
+    country: string;
+  };
+}
+
 export default function OrderSummary({
   paymentId,
   clientSecret,
   redirectStatus,
 }: OrderSummaryProps) {
   const [orderItems, setOrderItems] = useState<OrderLineItem[]>([]);
-  const [customerDetails, setCustomerDetails] = useState<{
-    email: string;
-    firstName: string;
-    lastName: string;
-    address: {
-      street_address: string;
-      street_address_2: string;
-      city: string;
-      state: string;
-      postal_code: string;
-      country: string;
-    };
-  } | null>(null);
+  const [customerDetails, setCustomerDetails] =
+    useState<CustomerDetailsProps | null>(null);
   const [orderNumber, setOrderNumber] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const createOrder = async () => {
+      // Check localStorage first
+      const storedOrder = localStorage.getItem('lastOrder');
+      if (storedOrder) {
+        const parsedOrder = JSON.parse(storedOrder);
+        setOrderItems(parsedOrder.orderItems);
+        setCustomerDetails(parsedOrder.customerDetails);
+        setOrderNumber(parsedOrder.orderNumber);
+        setLoading(false);
+        return;
+      }
+
       if (redirectStatus !== 'succeeded') {
         setError('Payment was not successful');
         setLoading(false);
@@ -108,14 +122,18 @@ export default function OrderSummary({
 
         if (data.orderItems) {
           setOrderItems(data.orderItems);
-        }
-
-        if (data.customerDetails) {
           setCustomerDetails(data.customerDetails);
-        }
-
-        if (data.orderNumber) {
           setOrderNumber(data.orderNumber);
+
+          // Store order details in localStorage
+          localStorage.setItem(
+            'lastOrder',
+            JSON.stringify({
+              orderItems: data.orderItems,
+              customerDetails: data.customerDetails,
+              orderNumber: data.orderNumber,
+            })
+          );
         }
 
         // Clear cookies after successful order
@@ -137,6 +155,13 @@ export default function OrderSummary({
   useEffect(() => {
     console.log('customerDetails:', customerDetails);
   }, [customerDetails]);
+
+  // Add cleanup effect
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('lastOrder');
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -164,82 +189,13 @@ export default function OrderSummary({
 
   return (
     <div className='mt-10 text-left space-y-8'>
-      {/* Order Number Section */}
-      {orderNumber && (
-        <div className='bg-white/10 p-6 rounded-lg'>
-          <h3 className='text-2xl font-bold mb-4'>Order Confirmation</h3>
-          <p className='text-lg'>
-            Your order number is:{' '}
-            <span className='font-bold'>#{orderNumber}</span>
-          </p>
-          <p className='text-sm text-gray-600 mt-2'>
-            Please keep this number for your records
-          </p>
-        </div>
-      )}
-
-      {/* Customer Details Section */}
-      {customerDetails && (
-        <div className='p-6 rounded-lg'>
-          <p className='text-xl mb-4'>
-            Shipping updates will be sent to{' '}
-            <span className='font-bold'>{customerDetails.email}</span>
-          </p>
-          <h3 className='text-sm md:text-2xl font-bold mb-4'>
-            Customer Details
-          </h3>
-          <div className='md:grid md:grid-cols-2 md:gap-4'>
-            <div>
-              <p className='font-semibold'>Name</p>
-              <p>{`${customerDetails.firstName} ${customerDetails.lastName}`}</p>
-            </div>
-            <div>
-              <p className='font-semibold'>Email</p>
-              <p>{customerDetails.email}</p>
-            </div>
-            <div className='col-span-2'>
-              <p className='font-semibold'>Shipping Address</p>
-              <p>{customerDetails.address.street_address}</p>
-              {customerDetails.address.street_address_2 && (
-                <p>{customerDetails.address.street_address_2}</p>
-              )}
-              <p>
-                {`${customerDetails.address.city}, ${customerDetails.address.state} ${customerDetails.address.postal_code}`}
-              </p>
-              <p>{customerDetails.address.country}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Order Items Section */}
+      {orderNumber && <OrderNumber orderNumber={orderNumber} />}
+      {customerDetails && <CustomerDetails customerDetails={customerDetails} />}
       <div>
         <h3 className='text-2xl font-bold mb-4'>Order Items</h3>
         <div className='space-y-4'>
           {orderItems.map((item, index) => (
-            <div key={index} className='flex items-center gap-4 p-4 rounded-lg'>
-              <div className='relative w-20 h-20'>
-                <Image
-                  src={item.products.product_images[0]?.image_url || '/NIA.jpg'}
-                  alt={item.products.product_name}
-                  fill
-                  className='object-contain'
-                />
-              </div>
-              <div className='flex-1'>
-                <h4 className='font-bold'>
-                  {item.products.product_name
-                    .replaceAll('-', ' ')
-                    .toUpperCase()}
-                </h4>
-                <div className='flex flex-row gap-4 text-sm font-semibold text-black'>
-                  <p>Size: {item.sizes?.size || 'N/A'}</p>
-                  <p>Color: {item.colors?.color_name || 'N/A'}</p>
-                  <p>Quantity: {item.quantity}</p>
-                  <p>${(item.price * item.quantity).toFixed(2)}</p>
-                </div>
-              </div>
-            </div>
+            <OrderItem key={index} item={item} />
           ))}
         </div>
       </div>

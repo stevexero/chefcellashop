@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useStore } from '../../store';
+import { useProductsStore } from '../../store';
 
 interface Size {
   size_id: string;
@@ -27,7 +27,7 @@ export default function SizeSelector({ sizes, basePrice }: SizeSelectorProps) {
     setSizeName,
     setAdjustedPrice,
     initializeSize,
-  } = useStore();
+  } = useProductsStore();
 
   useEffect(() => {
     initializeSize(sizes, basePrice);

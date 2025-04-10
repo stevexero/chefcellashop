@@ -41,9 +41,12 @@ interface StoreState {
 
   quantity: number;
   setQuantity: (qty: number) => void;
+
+  selectedImage: string | null;
+  setSelectedImage: (image: string) => void;
 }
 
-export const useStore = create<StoreState>((set) => ({
+export const useProductsStore = create<StoreState>((set) => ({
   selectedSize: null,
   setSelectedSize: (sizeId: string) => set({ selectedSize: sizeId }),
 
@@ -88,4 +91,7 @@ export const useStore = create<StoreState>((set) => ({
 
   quantity: 1,
   setQuantity: (qty: number) => set({ quantity: qty }),
+
+  selectedImage: null,
+  setSelectedImage: (image: string) => set({ selectedImage: image }),
 }));

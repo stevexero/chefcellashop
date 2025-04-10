@@ -1,35 +1,48 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useStore } from '../../store';
+import { useProductsStore } from '../../store';
+import { ColorProps } from '@/app/types/types';
 
-interface Color {
-  color_id: string;
-  color_name: string;
-  color_hex_code: string;
+interface Product {
+  product_id: string;
+  product_images: { image_url: string; color_id: string }[];
+  product_colors: {
+    color: { color_id: string; color_name: string; color_hex_code: string };
+  }[];
 }
 
 interface ColorSelectorProps {
-  colors: { color: Color }[];
+  product: Product;
 }
 
-export default function ColorSelector({ colors }: ColorSelectorProps) {
+export default function ColorSelector({ product }: ColorSelectorProps) {
   const {
     selectedColorId,
     selectedColorName,
     setSelectedColorId,
     setSelectedColorName,
     initializeColor,
-  } = useStore();
+    setSelectedImage,
+  } = useProductsStore();
 
-  const handleColorChange = (color: Color) => {
+  const handleColorChange = (color: ColorProps) => {
+    setSelectedColorId('');
     setSelectedColorId(color.color_id);
     setSelectedColorName(color.color_name);
+    setSelectedImage(
+      product.product_images.find((image) => image.color_id === color.color_id)
+        ?.image_url || ''
+    );
   };
 
   useEffect(() => {
-    initializeColor(colors);
-  }, [colors, initializeColor]);
+    initializeColor(product.product_colors);
+  }, [product.product_colors, initializeColor]);
+
+  useEffect(() => {
+    console.log(selectedColorId);
+  }, [selectedColorId]);
 
   return (
     <div className='border rounded-md md:border-none md:rounded-none p-2 mt-4 flex flex-row items-center justify-between md:flex-col md:items-start md:justify-start'>
@@ -38,7 +51,7 @@ export default function ColorSelector({ colors }: ColorSelectorProps) {
         {selectedColorName || 'N/A'}
       </p>
       <div className='flex gap-2 mt-0 md:mt-2'>
-        {colors.map(({ color }) => (
+        {product.product_colors.map(({ color }) => (
           <button
             key={color.color_id}
             type='button'

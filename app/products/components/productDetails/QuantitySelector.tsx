@@ -1,11 +1,11 @@
 'use client';
 
 import { BiMinus, BiPlus } from 'react-icons/bi';
-import { useStore } from '../../store';
+import { useProductsStore } from '../../store';
 import { useEffect } from 'react';
 
 const QuantitySelector = () => {
-  const { quantity, setQuantity } = useStore();
+  const { quantity, setQuantity } = useProductsStore();
 
   const handleDecrement = () => {
     if (quantity > 1) {

@@ -3,22 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { BiMinus, BiPlus, BiTrash } from 'react-icons/bi';
-
-interface ProductImage {
-  image_url: string;
-}
-
-interface CartItem {
-  cart_item_id: string;
-  product_id: string;
-  size_id: string | null;
-  color_id: string | null;
-  quantity: number;
-  price: number;
-  products: { product_name: string; product_images: ProductImage[] }[];
-  sizes: { size: string }[] | null;
-  colors: { color_name: string }[] | null;
-}
+import { CartItem } from '@/app/types/types';
 
 interface CartModalItemProps {
   item: CartItem;
@@ -35,10 +20,14 @@ export default function CartModalItem({
   const [isEditingQuantity, setIsEditingQuantity] = useState(false);
 
   const selectedImage =
-    item.products[0]?.product_images[0]?.image_url || '/NIA.jpg';
+    item?.products?.[0]?.product_images.find(
+      (image) => image.color_id === item.color_id
+    )?.image_url ||
+    item?.products?.[0]?.product_images[0]?.image_url ||
+    '/NIA.jpg';
 
   const handleDecrement = () => {
-    if (quantity > 1) {
+    if (quantity && quantity > 1) {
       setQuantity(quantity - 1);
       setIsEditingQuantity(true);
     } else {
@@ -47,12 +36,12 @@ export default function CartModalItem({
   };
 
   const handleIncrement = () => {
-    setQuantity(quantity + 1);
+    setQuantity((quantity || 0) + 1);
     setIsEditingQuantity(true);
   };
 
   const handleUpdateQuantity = () => {
-    updateItemQuantity(item.cart_item_id, quantity);
+    updateItemQuantity(item?.cart_item_id || '', quantity || 0);
     setIsEditingQuantity(false);
   };
 
@@ -63,20 +52,20 @@ export default function CartModalItem({
           src={selectedImage}
           width={100}
           height={100}
-          alt={item.products[0]?.product_name || 'Unknown Product'}
+          alt={item.products?.[0]?.product_name || 'Unknown Product'}
           className='max-w-[200px] max-h-[200px] object-contain'
         />
       </div>
       <div className='w-full flex flex-col'>
         <div className='flex flex-row items-center justify-between'>
           <p className='font-bold'>
-            {item.products[0]?.product_name
+            {item?.products?.[0]?.product_name
               .replaceAll('-', ' ')
               .toUpperCase() || 'Unknown Product'}
           </p>
           <button
             className='ml-4 text-red-500 hover:text-red-700 cursor-pointer'
-            onClick={() => removeItemFromCart(item.cart_item_id)}
+            onClick={() => removeItemFromCart(item?.cart_item_id || '')}
           >
             <BiTrash size={18} />
           </button>
@@ -85,9 +74,10 @@ export default function CartModalItem({
           <div className='text-xs font-semibold mt-2'>
             <p>{item.sizes?.[0]?.size || 'N/A'}</p>
             <p>{item.colors?.[0]?.color_name || 'N/A'}</p>
-            <p>${item.price.toFixed(2)} each</p>
+            <p>${item.price?.toFixed(2) || 'N/A'} each</p>
             <p>
-              x{quantity} = ${(item.price * item.quantity).toFixed(2)}
+              x{quantity} = $
+              {((item?.price || 0) * (item?.quantity || 0)).toFixed(2)}
             </p>
           </div>
           <div>

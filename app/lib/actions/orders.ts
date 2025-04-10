@@ -33,18 +33,29 @@ export async function createOrderAction(formData: FormData) {
       *,
       products (
         product_name,
-        product_images (image_url)
+        product_images (image_url, color_id)
       ),
-      sizes (size),
-      colors (color_name)
+      sizes (size, size_id),
+      colors (color_name, color_id)
     `
     )
     .eq('cart_id', cartId);
 
   if (itemsError) return { error: itemsError.message };
 
+  // Add selected image URL to each cart item
+  const cartItemsWithImages = cartItems.map((item) => ({
+    ...item,
+    selectedImage:
+      item.products.product_images.find(
+        (image: { color_id: string }) => image.color_id === item.color_id
+      )?.image_url ||
+      item.products.product_images[0]?.image_url ||
+      '/NIA.jpg',
+  }));
+
   // Calculate total amount
-  const amount = cartItems.reduce(
+  const amount = cartItemsWithImages.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
@@ -129,7 +140,7 @@ export async function createOrderAction(formData: FormData) {
   if (orderError) return { error: orderError.message };
 
   // Create order line items
-  const orderLineItems = cartItems.map((item) => ({
+  const orderLineItems = cartItemsWithImages.map((item) => ({
     order_id: order.order_id,
     product_id: item.product_id,
     size_id: item.size_id,
@@ -167,7 +178,7 @@ export async function createOrderAction(formData: FormData) {
         firstName: customerDetails.firstName,
         lastName: customerDetails.lastName,
         orderNumber: order.order_number,
-        orderItems: cartItems,
+        orderItems: cartItemsWithImages,
         address: {
           street_address: address.street_address,
           street_address_2: address.street_address_2,
@@ -185,7 +196,7 @@ export async function createOrderAction(formData: FormData) {
 
   return {
     message: 'Order created successfully',
-    orderItems: cartItems,
+    orderItems: cartItemsWithImages,
     orderNumber: order.order_number,
     customerDetails: {
       ...customerDetails,

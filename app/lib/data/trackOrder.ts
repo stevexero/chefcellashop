@@ -16,11 +16,14 @@ type TrackOrderResponse = {
       last_name: string;
     };
     orderItems: Array<{
-      name: string;
+      products: {
+        product_images: { image_url: string; color_id: string }[];
+        product_name: string;
+      };
+      sizes: { size: string; size_id: string } | null;
+      colors: { color_name: string; color_id: string } | null;
       quantity: number;
-      base_price: number;
-      color: string;
-      size: string;
+      price: number;
     }>;
   };
 };
@@ -68,6 +71,7 @@ export async function trackOrder(
       .select('*')
       .eq('temp_user_id', order.temp_user_id)
       .single();
+
     if (customerError) {
       throw new Error('Customer not found');
     }
@@ -81,13 +85,18 @@ export async function trackOrder(
         *,
         products (
           product_name,
-          base_price
+          product_images (
+            image_url,
+            color_id
+          )
         ),
         sizes (
-          size
+          size,
+          size_id 
         ),
         colors (
-          color_name
+          color_name,
+          color_id
         )
       `
       )
@@ -122,11 +131,16 @@ export async function trackOrder(
         orderDate: order.created_at,
         customer: customer,
         orderItems: orderItems.map((item) => ({
-          name: item.products.product_name,
+          products: {
+            product_images: item.products.product_images || [],
+            product_name: item.products.product_name,
+          },
+          sizes: item.sizes
+            ? { size: item.sizes.size, size_id: item.sizes.size_id }
+            : null,
+          colors: item.colors,
           quantity: item.quantity,
-          base_price: item.products.base_price,
-          color: item.colors?.color_name || 'N/A',
-          size: item.sizes?.size || 'N/A',
+          price: item.price,
         })),
       },
     };
