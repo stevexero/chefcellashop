@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { FaChevronDown, FaTimes } from 'react-icons/fa';
-import { useAddProductStore } from '@/app/components/addProduct/addProductStore';
+import { useAddProductStore } from '@/app/dashboard/components/addProduct/addProductStore';
 import { useRef } from 'react';
 import { ColorProps } from '@/app/types/types';
 

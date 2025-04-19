@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
-import { useAddProductStore } from '@/app/components/addProduct/addProductStore';
+import { useAddProductStore } from '@/app/dashboard/components/addProduct/addProductStore';
 import { SizesProps } from '@/app/types/types';
 
 export default function ProductSizes() {

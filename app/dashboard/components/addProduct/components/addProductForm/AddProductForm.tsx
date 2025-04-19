@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useClientStore } from '../../../../store/clientStore';
+import { useClientStore } from '../../../../../store/clientStore';
 import ProductName from './components/ProductName';
 import ProductBasePrice from './components/ProductBasePrice';
 import ProductDescription from './components/ProductDescription';
 import ProductSizes from './components/ProductSizes';
 import ProductImages from './components/ProductImages';
-import { useAddProductStore } from '@/app/components/addProduct/addProductStore';
+import { useAddProductStore } from '@/app/dashboard/components/addProduct/addProductStore';
 import ProductColors from './components/ProductColors';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 import AddProductCategory from './components/AddProductCategory';

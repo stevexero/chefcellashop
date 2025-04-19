@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useAddProductStore } from '@/app/components/addProduct/addProductStore';
+import { useAddProductStore } from '@/app/dashboard/components/addProduct/addProductStore';
 import { ColorProps } from '@/app/types/types';
 
 export default function ProductColors() {

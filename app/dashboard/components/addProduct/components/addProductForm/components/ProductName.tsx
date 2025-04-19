@@ -1,6 +1,6 @@
 'use client';
 
-import { useAddProductStore } from '@/app/components/addProduct/addProductStore';
+import { useAddProductStore } from '@/app/dashboard/components/addProduct/addProductStore';
 
 export default function ProductName() {
   const { productName, setProductName } = useAddProductStore();
