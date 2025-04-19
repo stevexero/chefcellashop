@@ -4,7 +4,7 @@ import './globals.css';
 import Navbar from './components/navbar/navbar';
 import UserModal from './components/UserModal';
 import { createClient } from './utils/supabase/server';
-import AddProductModal from './components/addProduct/components/AddProductModal';
+import AddProductModal from './dashboard/components/addProduct/components/AddProductModal';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CartModal from './components/cartDetails/components/CartModal';

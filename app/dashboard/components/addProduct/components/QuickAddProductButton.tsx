@@ -1,6 +1,6 @@
 'use client';
 
-import { useClientStore } from '../../../store/clientStore';
+import { useClientStore } from '../../../../store/clientStore';
 
 export default function QuickAddProductButton() {
   const { toggleModal } = useClientStore();

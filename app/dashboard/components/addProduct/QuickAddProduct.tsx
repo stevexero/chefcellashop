@@ -1,4 +1,4 @@
-import { fetchUserProfileByUserId } from '../../lib/data/data';
+import { fetchUserProfileByUserId } from '../../../lib/data/data';
 import QuickAddProductButton from './components/QuickAddProductButton';
 import { QuickAddProductProps } from '@/app/types/types';
 

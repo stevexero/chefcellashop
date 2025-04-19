@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAddProductStore } from '@/app/components/addProduct/addProductStore';
+import { useAddProductStore } from '@/app/dashboard/components/addProduct/addProductStore';
 
 export default function ProductBasePrice() {
   const { productBasePrice, setProductBasePrice } = useAddProductStore();

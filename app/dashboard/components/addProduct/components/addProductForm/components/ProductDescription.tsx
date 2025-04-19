@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAddProductStore } from '@/app/components/addProduct/addProductStore';
+import { useAddProductStore } from '@/app/dashboard/components/addProduct/addProductStore';
 
 export default function ProductDescription() {
   const { productDescription, setProductDescription } = useAddProductStore();

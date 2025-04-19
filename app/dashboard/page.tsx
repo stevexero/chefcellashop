@@ -1,8 +1,8 @@
 import { checkAuth } from '@/app/utils/auth';
-import ProfileCard from '../components/ProfileCard';
+import ProfileCard from './components/ProfileCard';
 import { Suspense } from 'react';
-import QuickAddProduct from '../components/addProduct/QuickAddProduct';
-import Orders from '../components/dashboard/orders/Orders';
+import QuickAddProduct from './components/addProduct/QuickAddProduct';
+import Orders from './components/orders/Orders';
 
 export default async function Dashboard() {
   const user = await checkAuth();

@@ -54,7 +54,7 @@ export function Card({
   const sizesCount = uniqueSizes.length;
 
   return (
-    <Link href={`products/${id}`} className='flex flex-col items-center'>
+    <Link href={`products/${id}`} className='flex flex-col items-center mb-8'>
       {imageUrl ? (
         <Image
           src={imageUrl}

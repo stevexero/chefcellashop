@@ -6,7 +6,7 @@ export default async function Page() {
   return (
     <main>
       <h1 className='font-bold text-lg text-center mt-8'>T-SHIRTS</h1>
-      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-8'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-8'>
         <Suspense fallback={<CardsSkeleton />}>
           <CardWrapper />
         </Suspense>
