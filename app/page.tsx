@@ -7,7 +7,7 @@ import MailingListForm from './components/mailingList/MailingListForm';
 export default async function Home() {
   return (
     <div className='w-full font-[family-name:var(--font-inter)] p-4 md:p-0'>
-      <main className='w-full flex flex-col items-center justify-center mt-6'>
+      <main className='w-full flex flex-col items-center justify-center mt-2 md:mt-6'>
         <h1 className='text-3xl font-bold text-center'>What Up Y&apos;all!</h1>
         <div
           className='w-full h-[450px] mt-4 flex flex-col items-center justify-between p-8'
@@ -18,7 +18,7 @@ export default async function Home() {
           }}
         >
           <div></div>
-          <Link href='/products' className='button-85'>
+          <Link href='/products' className='button-85 text-center'>
             Shop all Chef Cella Products
           </Link>
         </div>
