@@ -33,7 +33,7 @@ const TopNavLinks = () => {
   }, [setCartItems, pathname]);
 
   return (
-    <div className='text-white flex flex-row items-center'>
+    <div className='text-white flex flex-row items-center justify-self-end md:justify-self-center'>
       {/* <Link href='/products' className='hidden md:block button-85 mr-16'>
         Shop
       </Link> */}

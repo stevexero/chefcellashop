@@ -17,11 +17,14 @@ export default function MailingListForm() {
   };
 
   return (
-    <div className='w-full flex flex-col justify-center items-center bg-black p-8'>
-      <h4 className='text-white text-lg font-bold'>
+    <div className='w-full flex flex-col justify-center items-center bg-black p-4 md:p-8 rounded-lg md:rounded-none'>
+      <h4 className='text-white text-lg font-bold text-center'>
         Join our mailing list to get the latest Chef Cella news and updates
       </h4>
-      <form className='w-1/4 flex flex-col gap-4 mt-8' action={handleSubmit}>
+      <form
+        className='w-full md:w-1/4 flex flex-col gap-4 mt-8'
+        action={handleSubmit}
+      >
         <input
           type='email'
           placeholder='Email'

@@ -24,7 +24,10 @@ const Navbar = ({ user }: NavbarProps) => {
               <p className='hidden md:block text-white text-xs'>
                 SHIPPING INCLUDED WITH ALL ORDERS!
               </p>
-              <Link href='/'>
+              <Link
+                href='/'
+                className='justify-self-start md:justify-self-center'
+              >
                 <Image
                   src='/frontlogocut.png'
                   width={100}
@@ -37,12 +40,11 @@ const Navbar = ({ user }: NavbarProps) => {
           )}
         </>
       )}
-      <div className='w-full md:grid md:grid-cols-3 justify-items-center items-center p-2 border-b border-b-slate-300 text-center'>
-        <div></div>
+      <div className='w-full flex items-center justify-center p-2 border-b border-b-slate-300 text-center'>
         {user && pathname === '/dashboard' ? null : (
           <>
             {pathname.startsWith('/dashboard') ? null : (
-              <div className='flex flex-row items-center justify-center'>
+              <div className='flex flex-col md:flex-row items-center justify-center'>
                 <p className='text-xs md:text-base'>
                   All orders processed and shipped the same day!
                 </p>
