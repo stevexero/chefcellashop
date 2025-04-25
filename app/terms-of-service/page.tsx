@@ -3,7 +3,7 @@ export default function TermsOfServicePage() {
     <main className='max-w-3xl mx-auto px-4 py-12'>
       <h1 className='text-4xl font-bold mb-6'>Terms of Service</h1>
 
-      <p className='mb-4 text-sm text-gray-500'>Last updated: [Insert Date]</p>
+      <p className='mb-4 text-sm text-gray-500'>Last updated: 2025-04-20</p>
 
       <section className='mb-10'>
         <h2 className='text-2xl font-semibold mb-2'>1. Overview</h2>

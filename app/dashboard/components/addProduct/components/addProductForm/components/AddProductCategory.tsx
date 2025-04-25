@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { addCategoryAction } from '@/app/lib/actions/actions';
+import { addCategoryAction } from '@/app/dashboard/actions';
 import { useClientStore } from '@/app/store/clientStore';
 import { toast } from 'react-toastify';
 import { CategoryProps } from '@/app/types/types';

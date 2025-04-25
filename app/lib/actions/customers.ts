@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/app/lib/supabase/server';
 
 export async function createGuestCustomerAction(formData: FormData) {
   const email = formData.get('email') as string;

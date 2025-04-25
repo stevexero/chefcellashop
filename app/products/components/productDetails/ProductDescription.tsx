@@ -1,8 +1,4 @@
-'use client';
-
-interface ProductDescriptionProps {
-  description: string | undefined;
-}
+import { ProductDescriptionProps } from '@/app/types/types';
 
 export default function ProductDescription({
   description,

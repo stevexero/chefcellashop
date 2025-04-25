@@ -7,7 +7,6 @@ export async function POST(
 ) {
   const { id: accountId } = await params;
 
-  // parse the JSON body
   const {
     business_profile,
     individual,
@@ -41,23 +40,6 @@ export async function POST(
     );
   }
 }
-
-// export async function POST(
-//   req: NextRequest,
-//   { params }: { params: { id: string } }
-// ) {
-//   try {
-//     const body = await req.json();
-//     const account = await stripe.accounts.update(params.id, body);
-//     return NextResponse.json({ account });
-//   } catch (error) {
-//     console.error('Error updating account:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to update account' },
-//       { status: 500 }
-//     );
-//   }
-// }
 
 export async function DELETE(
   req: NextRequest,

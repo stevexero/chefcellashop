@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/app/lib/supabase/server';
 import { getSession } from '../session';
 import { sendEmail } from '@/app/utils/email';
 import {
@@ -60,42 +60,39 @@ export async function createOrderAction(formData: FormData) {
     0
   );
 
-  // Get customer details based on user type
-  let customerDetails;
-  if (cart.user_id) {
-    // For authenticated users
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('email, first_name, last_name')
-      .eq('profile_id', cart.user_id)
-      .single();
+  // let customerDetails;
+  // if (cart.user_id) {
+  //   const { data: profile, error: profileError } = await supabase
+  //     .from('profiles')
+  //     .select('email, first_name, last_name')
+  //     .eq('profile_id', cart.user_id)
+  //     .single();
 
-    if (profileError) return { error: profileError.message };
-    customerDetails = {
-      email: profile.email,
-      firstName: profile.first_name,
-      lastName: profile.last_name,
-    };
-  } else {
-    // For guest users
-    const session = await getSession();
-    if (!session.tempUserId) {
-      return { error: 'Missing guest user information' };
-    }
-
-    const { data: tempUser, error: tempUserError } = await supabase
-      .from('temp_users')
-      .select('email, first_name, last_name')
-      .eq('temp_user_id', session.tempUserId)
-      .single();
-
-    if (tempUserError) return { error: tempUserError.message };
-    customerDetails = {
-      email: tempUser.email,
-      firstName: tempUser.first_name,
-      lastName: tempUser.last_name,
-    };
+  //   if (profileError) return { error: profileError.message };
+  //   customerDetails = {
+  //     email: profile.email,
+  //     firstName: profile.first_name,
+  //     lastName: profile.last_name,
+  //   };
+  // } else {
+  const session = await getSession();
+  if (!session.tempUserId) {
+    return { error: 'Missing guest user information' };
   }
+
+  const { data: tempUser, error: tempUserError } = await supabase
+    .from('temp_users')
+    .select('email, first_name, last_name')
+    .eq('temp_user_id', session.tempUserId)
+    .single();
+
+  if (tempUserError) return { error: tempUserError.message };
+  const customerDetails = {
+    email: tempUser.email,
+    firstName: tempUser.first_name,
+    lastName: tempUser.last_name,
+  };
+  // }
 
   // Get shipping address
   const { data: address, error: addressError } = await supabase
@@ -111,7 +108,7 @@ export async function createOrderAction(formData: FormData) {
     payment_id: string;
     amount: number;
     shipping_address_id: string;
-    profile_id?: string | null;
+    // profile_id?: string | null;
     temp_user_id?: string | null;
   } = {
     payment_id: paymentId,
@@ -120,14 +117,14 @@ export async function createOrderAction(formData: FormData) {
   };
 
   if (cart.user_id) {
-    orderData.profile_id = cart.user_id;
+    // orderData.profile_id = cart.user_id;
     orderData.temp_user_id = null;
   } else {
     const session = await getSession();
     if (!session.tempUserId) {
       return { error: 'Missing guest user information' };
     }
-    orderData.profile_id = null;
+    // orderData.profile_id = null;
     orderData.temp_user_id = session.tempUserId;
   }
 
@@ -172,6 +169,9 @@ export async function createOrderAction(formData: FormData) {
 
   try {
     await sendEmail({
+      user: process.env.SMTP_USER || '',
+      from: process.env.SMTP_FROM || '',
+      pass: process.env.SMTP_PASSWORD || '',
       to: customerDetails.email,
       subject: `Order Confirmation #${order.order_number} - Chef Cella`,
       html: generateOrderConfirmationEmail({
@@ -312,6 +312,9 @@ export async function updateOrderStatus(
     if (newStatus === 'shipped' && trackingNumber && trackingCompany) {
       console.log('Sending shipping email to:', customerEmail);
       await sendEmail({
+        user: process.env.SMTP_USER || '',
+        from: process.env.SMTP_FROM || '',
+        pass: process.env.SMTP_PASSWORD || '',
         to: customerEmail,
         subject: `Your Order #${orderDetails.order_number} Has Been Shipped!`,
         html: generateShippingEmail({
@@ -324,6 +327,9 @@ export async function updateOrderStatus(
     } else if (newStatus === 'delivered') {
       console.log('Sending delivery email to:', customerEmail);
       await sendEmail({
+        user: process.env.SMTP_USER || '',
+        from: process.env.SMTP_FROM || '',
+        pass: process.env.SMTP_PASSWORD || '',
         to: customerEmail,
         subject: `Your Order #${orderDetails.order_number} Has Been Delivered!`,
         html: generateDeliveryEmail({

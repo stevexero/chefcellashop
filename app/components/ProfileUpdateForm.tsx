@@ -2,19 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-
-interface UserProfile {
-  profile_id?: string;
-  first_name?: string;
-  last_name?: string;
-  avatar_url?: string;
-  created_at?: string;
-  role?: string;
-}
-
-interface ProfileUpdateFormProps {
-  userProfile: UserProfile;
-}
+import { ProfileUpdateFormProps } from '@/app/types/types';
 
 export default function ProfileUpdateForm({
   userProfile,

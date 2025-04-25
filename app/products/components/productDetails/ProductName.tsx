@@ -1,8 +1,4 @@
-'use client';
-
-interface ProductNameProps {
-  productName: string | undefined;
-}
+import { ProductNameProps } from '@/app/types/types';
 
 export default function ProductName({ productName }: ProductNameProps) {
   return (

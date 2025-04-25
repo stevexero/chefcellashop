@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { loadStripe, Stripe } from '@stripe/stripe-js';
 import Link from 'next/link';
+import { Button } from '@/app/ui/button';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -16,7 +17,6 @@ export default function OnboardStripe() {
   const [error, setError] = useState<string | null>(null);
   const [connectedAccountId, setConnectedAccountId] = useState<string>();
 
-  // form fields
   const [website, setWebsite] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -51,7 +51,6 @@ export default function OnboardStripe() {
     setError(null);
     setAccountUpdatePending(true);
     try {
-      // tokenize bank account
       const stripe = (await stripePromise) as Stripe;
       const { token, error: tokErr } = await stripe.createToken(
         'bank_account',
@@ -63,7 +62,6 @@ export default function OnboardStripe() {
         }
       );
       if (tokErr || !token) throw new Error(tokErr?.message);
-      // send details
       const res = await fetch(`/api/account/${connectedAccountId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -103,10 +101,20 @@ export default function OnboardStripe() {
     setError(null);
     setDeletePending(true);
     try {
+      // First delete the Stripe account
       const res = await fetch(`/api/account/${connectedAccountId}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error((await res.json()).error);
+
+      // Then update the user's stripe_account_id to NULL
+      const updateRes = await fetch('/api/profile/update-stripe-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stripe_account_id: null }),
+      });
+      if (!updateRes.ok) throw new Error('Failed to update profile');
+
       setConnectedAccountId(undefined);
       setConnectedAccountUpdated(false);
     } catch (err) {
@@ -117,7 +125,7 @@ export default function OnboardStripe() {
   };
 
   return (
-    <div className='container mx-auto p-6'>
+    <div className='mx-auto p-6'>
       <div className='banner mb-6 text-center'>
         <h1 className='text-3xl font-bold'>Set Up Your Payments</h1>
         <p className='mt-2 text-gray-700'>
@@ -128,21 +136,19 @@ export default function OnboardStripe() {
 
       {!connectedAccountId ? (
         <div className='text-center'>
-          <button
+          <Button
             onClick={handleSignUp}
             disabled={accountCreatePending}
-            className='px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50'
+            variant={'default'}
           >
             {accountCreatePending
               ? 'Initializing Stripe…'
               : 'Connect Stripe Account'}
-          </button>
+          </Button>
         </div>
       ) : !connectedAccountUpdated ? (
         <div className='bg-white p-6 rounded shadow-md'>
-          <h2 className='text-xl font-semibold mb-4'>
-            Step 2: Provide Your Details
-          </h2>
+          <h2 className='text-xl font-semibold mb-4'>Provide Your Details</h2>
           <p className='text-gray-600 mb-4'>
             We’ll collect the minimum information required by Stripe so you can
             start accepting payments.
@@ -152,157 +158,173 @@ export default function OnboardStripe() {
             <label>
               Website URL
               <input
-                className='w-full border px-2 py-1'
+                className='w-full border px-2 py-1 rounded'
                 type='url'
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
+                required
                 placeholder='https://your-site.com'
               />
             </label>
 
-            <fieldset className='border p-4'>
+            <fieldset className='border p-4 rounded-lg'>
               <legend className='font-medium'>Your Information</legend>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-2'>
                 <input
-                  className='border px-2 py-1'
+                  className='border px-2 py-1 rounded'
                   type='text'
                   placeholder='First Name'
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
+                  required
                 />
                 <input
-                  className='border px-2 py-1'
+                  className='border px-2 py-1 rounded'
                   type='text'
                   placeholder='Last Name'
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
+                  required
                 />
-                <input
-                  className='border px-2 py-1'
-                  type='number'
-                  placeholder='MM'
-                  value={dobMonth}
-                  onChange={(e) => setDobMonth(e.target.value)}
-                />
-                <input
-                  className='border px-2 py-1'
-                  type='number'
-                  placeholder='DD'
-                  value={dobDay}
-                  onChange={(e) => setDobDay(e.target.value)}
-                />
-                <input
-                  className='border px-2 py-1'
-                  type='number'
-                  placeholder='YYYY'
-                  value={dobYear}
-                  onChange={(e) => setDobYear(e.target.value)}
-                />
-                <input
-                  className='border px-2 py-1'
-                  type='text'
-                  placeholder='SSN Last 4'
-                  maxLength={4}
-                  value={ssnLast4}
-                  onChange={(e) => setSsnLast4(e.target.value)}
-                />
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <input
+                    className='border px-2 py-1 rounded'
+                    type='number'
+                    placeholder='MM'
+                    value={dobMonth}
+                    onChange={(e) => setDobMonth(e.target.value)}
+                    required
+                  />
+                  <input
+                    className='border px-2 py-1 rounded'
+                    type='number'
+                    placeholder='DD'
+                    value={dobDay}
+                    onChange={(e) => setDobDay(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <input
+                    className='border px-2 py-1 rounded'
+                    type='number'
+                    placeholder='YYYY'
+                    value={dobYear}
+                    onChange={(e) => setDobYear(e.target.value)}
+                  />
+                  <input
+                    className='border px-2 py-1 rounded'
+                    type='text'
+                    placeholder='SSN Last 4'
+                    maxLength={4}
+                    value={ssnLast4}
+                    onChange={(e) => setSsnLast4(e.target.value)}
+                  />
+                </div>
               </div>
             </fieldset>
 
-            <fieldset className='border p-4'>
+            <fieldset className='border p-4 rounded-lg'>
               <legend className='font-medium'>Address</legend>
               <input
-                className='border px-2 py-1'
+                className='border px-2 py-1 w-full rounded'
                 type='text'
                 placeholder='Street Address'
                 value={addressLine1}
                 onChange={(e) => setAddressLine1(e.target.value)}
+                required
               />
               <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mt-2'>
                 <input
-                  className='border px-2 py-1'
+                  className='border px-2 py-1 rounded'
                   type='text'
                   placeholder='City'
                   value={addressCity}
                   onChange={(e) => setAddressCity(e.target.value)}
+                  required
                 />
                 <input
-                  className='border px-2 py-1'
+                  className='border px-2 py-1 rounded'
                   type='text'
                   placeholder='State'
                   value={addressState}
                   onChange={(e) => setAddressState(e.target.value)}
+                  required
                 />
                 <input
-                  className='border px-2 py-1'
+                  className='border px-2 py-1 rounded'
                   type='text'
                   placeholder='Postal Code'
                   value={addressPostalCode}
                   onChange={(e) => setAddressPostalCode(e.target.value)}
+                  required
                 />
               </div>
             </fieldset>
 
-            <fieldset className='border p-4'>
+            <fieldset className='border p-4 rounded-lg'>
               <legend className='font-medium'>Bank Account</legend>
-              <input
-                className='border px-2 py-1'
-                type='text'
-                placeholder='Routing Number'
-                value={routingNumber}
-                onChange={(e) => setRoutingNumber(e.target.value)}
-              />
-              <input
-                className='border px-2 py-1'
-                type='text'
-                placeholder='Account Number'
-                value={accountNumber}
-                onChange={(e) => setAccountNumber(e.target.value)}
-              />
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-2'>
+                <input
+                  className='border px-2 py-1 rounded'
+                  type='text'
+                  placeholder='Routing Number'
+                  value={routingNumber}
+                  onChange={(e) => setRoutingNumber(e.target.value)}
+                  required
+                />
+                <input
+                  className='border px-2 py-1 rounded'
+                  type='text'
+                  placeholder='Account Number'
+                  value={accountNumber}
+                  onChange={(e) => setAccountNumber(e.target.value)}
+                  required
+                />
+              </div>
             </fieldset>
 
             <div className='flex justify-between mt-4'>
-              <button
+              <Button
                 onClick={handleAddInformation}
                 disabled={accountUpdatePending}
-                className='px-5 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50'
+                variant={'default'}
               >
                 {accountUpdatePending
                   ? 'Submitting details…'
                   : 'Submit for Verification'}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleDeleteAccount}
                 disabled={deletePending}
-                className='px-5 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50'
+                variant={'destructive'}
               >
                 {deletePending ? 'Deleting…' : 'Cancel & Delete'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       ) : (
         <div className='text-center mt-8'>
-          <h2 className='text-2xl font-semibold text-green-700'>
-            You’re All Set!
+          <h2 className='text-2xl font-semibold text-black'>
+            You&apos;re All Set!
           </h2>
           <p className='mt-2 text-gray-600'>
             Your information has been submitted. Stripe will review and let you
             know once you can start accepting payments.
           </p>
-          <Link
-            href='/dashboard'
-            className='mt-4 px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50'
-          >
-            Back to Dashboard
-          </Link>
-          <button
-            onClick={handleDeleteAccount}
-            disabled={deletePending}
-            className='mt-4 px-5 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50'
-          >
-            {deletePending ? 'Deleting…' : 'Disconnect Stripe'}
-          </button>
+          <div className='flex grid-cols-1 md:grid-cols-2 gap-4 justify-center mt-8'>
+            <Link href='/dashboard'>
+              <Button variant={'default'}>Back to Dashboard</Button>
+            </Link>
+            <Button
+              onClick={handleDeleteAccount}
+              disabled={deletePending}
+              variant={'destructive'}
+            >
+              {deletePending ? 'Deleting…' : 'Disconnect Stripe'}
+            </Button>
+          </div>
         </div>
       )}
 

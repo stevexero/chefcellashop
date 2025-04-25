@@ -4,11 +4,7 @@ import { useEffect, useState } from 'react';
 import { useProductsStore } from '../../store';
 import { useClientStore } from '@/app/store/clientStore';
 import Cookies from 'js-cookie';
-
-interface AddItemToCartProps {
-  productId: string;
-  isOneSize: boolean;
-}
+import { AddItemToCartProps } from '@/app/types/types';
 
 export default function AddToCartForm({
   productId,
@@ -44,9 +40,7 @@ export default function AddToCartForm({
       }
 
       const result = await response.json();
-      console.log('//////////// result ////////////', result);
 
-      // Set the cartId cookie if it exists in the result
       if (result.cartId) {
         Cookies.set('cartId', result.cartId);
       }

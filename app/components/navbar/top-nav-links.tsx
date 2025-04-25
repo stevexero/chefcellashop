@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { CiShoppingCart } from 'react-icons/ci';
 import { useClientStore } from '@/app/store/clientStore';
 import { usePathname } from 'next/navigation';
@@ -34,9 +34,9 @@ const TopNavLinks = () => {
 
   return (
     <div className='text-white flex flex-row items-center'>
-      <Link href='/products' className='hidden md:block button-85 mr-16'>
+      {/* <Link href='/products' className='hidden md:block button-85 mr-16'>
         Shop
-      </Link>
+      </Link> */}
       <div
         className='flex flex-row items-center cursor-pointer'
         onClick={() => toggleModal('cart')}

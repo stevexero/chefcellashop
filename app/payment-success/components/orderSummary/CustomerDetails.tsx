@@ -1,24 +1,10 @@
-'use client';
+import { CustomerDetailsProps } from '@/app/types/types';
 
-interface CustomerDetailsProps {
-  customerDetails: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    address: {
-      street_address: string;
-      street_address_2: string;
-      city: string;
-      state: string;
-      postal_code: string;
-      country: string;
-    };
-  };
+interface CustomerDetails {
+  customerDetails: CustomerDetailsProps;
 }
 
-export default function CustomerDetails({
-  customerDetails,
-}: CustomerDetailsProps) {
+export default function CustomerDetails({ customerDetails }: CustomerDetails) {
   return (
     <div className='p-6 rounded-lg'>
       <p className='text-xl mb-4'>

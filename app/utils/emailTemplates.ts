@@ -136,3 +136,39 @@ export function generateDeliveryEmail({
     </div>
   `;
 }
+
+export function generateEmailAccessRequestEmail({
+  profileId,
+  firstName,
+  lastName,
+}: {
+  profileId: string;
+  firstName: string;
+  lastName: string;
+}) {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1 style="color: #333; text-align: center;">Email Access Request</h1>
+      <p>A user has requested email access for ${firstName} ${lastName} with profile ID ${profileId}.</p>
+      <p>Please approve or deny this request.</p>
+      <p>Thank you!</p>
+      <p>Chef Cella</p>
+    </div>
+  `;
+}
+
+export function generateMailingListEmail(email: string) {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1 style="color: #333; text-align: center;">Welcome to the Chef Cella mailing list!</h1>
+      <p>Thank you for joining our mailing list. You will receive updates about our products and promotions.</p>
+      <p>If you have any questions, please don't hesitate to contact us.</p>
+      <p>Thank you!</p>
+      <p>Chef Cella</p>
+      <p>You can unsubscribe from the mailing list at any time.</p>
+      <p>To unsubscribe, please click <a href="https://chefcella.com/unsubscribe?email=${encodeURIComponent(
+        email
+      )}">here</a>.</p>
+    </div>
+  `;
+}

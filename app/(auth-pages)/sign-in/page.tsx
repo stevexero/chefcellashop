@@ -1,15 +1,10 @@
 import { Suspense } from 'react';
-import { Message } from '@/app/ui/form-message';
-import LoginForm from '@/app/components/LoginForm';
-import { checkGuest } from '@/app/utils/auth';
+import LoginForm from '@/app/(auth-pages)/components/LoginForm';
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
-  await checkGuest();
-  const searchParams = await props.searchParams;
-
+export default async function Login() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <LoginForm searchParams={searchParams} />
+      <LoginForm />
     </Suspense>
   );
 }

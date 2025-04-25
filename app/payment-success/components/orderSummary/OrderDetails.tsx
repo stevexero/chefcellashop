@@ -1,42 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
-
-interface OrderDetailsProps {
-  order: {
-    order_id: string;
-    order_number: number;
-    amount: number;
-    status: string;
-    created_at: string;
-    tracking_number?: string;
-    tracking_company?: string;
-    addresses: {
-      street_address: string;
-      street_address_2?: string;
-      city: string;
-      state: string;
-      postal_code: string;
-      country: string;
-    };
-  };
-  customerDetails: {
-    email: string;
-    first_name: string;
-    last_name: string;
-  };
-  orderItems: Array<{
-    quantity: number;
-    price: number;
-    products: {
-      product_name: string;
-      product_images: { image_url: string; color_id: string }[];
-    };
-    sizes: { size: string } | null;
-    colors: { color_name: string; color_id: string } | null;
-  }>;
-}
+import Image from 'next/image';
+import { OrderDetailsProps } from '@/app/types/types';
 
 export default function OrderDetails({
   order,

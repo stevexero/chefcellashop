@@ -2,22 +2,7 @@
 
 import { useEffect } from 'react';
 import { useProductsStore } from '../../store';
-
-interface Size {
-  size_id: string;
-  size: string;
-}
-
-interface ProductSize {
-  size_id: string;
-  price_mod: number;
-  size: Size;
-}
-
-interface SizeSelectorProps {
-  sizes: ProductSize[];
-  basePrice: number;
-}
+import { ProductSizeProps, SizeSelectorProps } from '@/app/types/types';
 
 export default function SizeSelector({ sizes, basePrice }: SizeSelectorProps) {
   const {
@@ -33,7 +18,7 @@ export default function SizeSelector({ sizes, basePrice }: SizeSelectorProps) {
     initializeSize(sizes, basePrice);
   }, [sizes, basePrice, initializeSize]);
 
-  const handleSizeChange = (size: ProductSize) => {
+  const handleSizeChange = (size: ProductSizeProps) => {
     setSelectedSize(size.size_id);
     setSizeName(size.size.size);
     setAdjustedPrice(basePrice + size.price_mod);

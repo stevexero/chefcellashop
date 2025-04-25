@@ -1,17 +1,11 @@
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/app/lib/supabase/server';
 import OrderDetails from '@/app/payment-success/components/orderSummary/OrderDetails';
-
-interface OrderPageProps {
-  params: Promise<{
-    order_id: string;
-  }>;
-}
+import { OrderPageProps } from '@/app/types/types';
 
 export default async function OrderPage({ params }: OrderPageProps) {
   const supabase = await createClient();
   const { order_id } = await params;
 
-  // Fetch order details with related data
   const { data: order, error } = await supabase
     .from('orders')
     .select(
@@ -49,7 +43,6 @@ export default async function OrderPage({ params }: OrderPageProps) {
     return <div>Order not found</div>;
   }
 
-  // Get customer details based on user type
   let customerDetails;
   if (order.profile_id) {
     const { data: profile } = await supabase

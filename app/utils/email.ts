@@ -1,19 +1,29 @@
 import nodemailer from 'nodemailer';
 
 interface EmailOptions {
+  user: string;
+  from: string;
+  pass: string;
   to: string;
   subject: string;
   html: string;
 }
 
-export async function sendEmail({ to, subject, html }: EmailOptions) {
+export async function sendEmail({
+  user,
+  from,
+  pass,
+  to,
+  subject,
+  html,
+}: EmailOptions) {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT),
     secure: true,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
+      user,
+      pass,
     },
     tls: {
       rejectUnauthorized: false,
@@ -25,7 +35,7 @@ export async function sendEmail({ to, subject, html }: EmailOptions) {
     await transporter.verify();
 
     const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM,
+      from,
       to,
       subject,
       html,
