@@ -3,7 +3,7 @@ import CartDetails from '../components/cartDetails/CartDetails';
 
 export default function page() {
   return (
-    <Suspense>
+    <Suspense fallback={<div>Loading...</div>}>
       <CartDetails />
     </Suspense>
   );

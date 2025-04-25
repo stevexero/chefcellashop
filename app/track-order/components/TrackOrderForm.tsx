@@ -1,30 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { trackOrder } from '@/app/lib/data/trackOrder';
+import { trackOrder } from '@/app/track-order/data';
 import OrderItem from './OrderItem';
-
-interface OrderDetails {
-  orderNumber: string;
-  orderDate: string;
-  orderStatus: string;
-  orderAmount: number;
-  customer: {
-    email: string;
-    first_name: string;
-    last_name: string;
-  };
-  orderItems: Array<{
-    products: {
-      product_images: { image_url: string; color_id: string }[];
-      product_name: string;
-    };
-    sizes: { size: string; size_id: string } | null;
-    colors: { color_name: string; color_id: string } | null;
-    quantity: number;
-    price: number;
-  }>;
-}
+import { OrderDetails } from '@/app/types/types';
 
 export default function TrackOrderForm() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
@@ -32,6 +11,7 @@ export default function TrackOrderForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
     const formData = new FormData(e.currentTarget);
     const orderNumber = formData.get('order-number') as string;
     const email = formData.get('email') as string;
@@ -39,7 +19,6 @@ export default function TrackOrderForm() {
     const result = await trackOrder(orderNumber, email);
 
     if (result.success && result.orderDetails) {
-      console.log(result);
       setOrderDetails(result.orderDetails);
       setError('');
     } else {

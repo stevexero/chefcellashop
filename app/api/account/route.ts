@@ -1,37 +1,6 @@
-// pages/api/account/route.ts
-
-// import { stripe } from '@/app/utils/stripe/stripe';
-// import { NextRequest, NextResponse } from 'next/server';
-
-// export async function POST(req: NextRequest) {
-//   console.log('Creating custom Connect account…', req);
-//   try {
-//     const account = await stripe.accounts.create({
-//       type: 'custom', // ← CUSTOM account
-//       country: 'US',
-//       business_type: 'individual', // or 'company' if you’re onboarding businesses
-//       capabilities: {
-//         card_payments: { requested: true },
-//         transfers: { requested: true },
-//       },
-//     });
-
-//     return NextResponse.json({ account: account.id });
-//   } catch (error) {
-//     console.error(
-//       'Stripe Custom account creation error:',
-//       (error as Error).message
-//     );
-//     return NextResponse.json(
-//       { error: (error as Error).message },
-//       { status: 400 }
-//     );
-//   }
-// }
-
 import { stripe } from '@/app/utils/stripe/stripe';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/app/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
   console.log('POST request received', req);
@@ -90,7 +59,6 @@ export async function POST(req: NextRequest) {
       error
     );
 
-    // Check if it's a Stripe Connect error
     if (error instanceof Error && error.message.includes('Connect')) {
       return NextResponse.json(
         { error: 'Stripe Connect is not enabled. Please contact support.' },

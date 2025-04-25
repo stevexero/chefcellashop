@@ -1,19 +1,5 @@
-'use client';
-
 import Image from 'next/image';
-
-interface OrderItemProps {
-  item: {
-    products: {
-      product_images: { image_url: string; color_id: string }[];
-      product_name: string;
-    };
-    sizes: { size: string } | null;
-    colors: { color_name: string; color_id: string } | null;
-    quantity: number;
-    price: number;
-  };
-}
+import { OrderItemProps } from '@/app/types/types';
 
 export default function OrderItem({ item }: OrderItemProps) {
   return (

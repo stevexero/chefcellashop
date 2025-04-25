@@ -1,5 +1,4 @@
-// import { Suspense } from 'react';
-import { fetchCartItems } from '@/app/lib/data/data';
+import { fetchCartItems } from '@/app/checkout/data';
 import Link from 'next/link';
 import Checkout from './components/Checkout/Checkout';
 import CheckoutHeader from './components/CheckoutHeader';

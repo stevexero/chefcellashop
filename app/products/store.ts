@@ -1,23 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-
-interface Size {
-  size_id: string;
-  size: string;
-}
-
-interface ProductSize {
-  size_id: string;
-  price_mod: number;
-  size: Size;
-}
-
-interface Color {
-  color_id: string;
-  color_name: string;
-  color_hex_code: string;
-}
+import { ProductSizeProps, ColorProps } from '@/app/types/types';
 
 interface StoreState {
   selectedSize: string | null;
@@ -29,7 +13,7 @@ interface StoreState {
   adjustedPrice: number;
   setAdjustedPrice: (price: number) => void;
 
-  initializeSize: (sizes: ProductSize[], basePrice: number) => void;
+  initializeSize: (sizes: ProductSizeProps[], basePrice: number) => void;
 
   selectedColorId: string | null;
   setSelectedColorId: (colorId: string) => void;
@@ -37,7 +21,7 @@ interface StoreState {
   selectedColorName: string;
   setSelectedColorName: (name: string) => void;
 
-  initializeColor: (colors: { color: Color }[]) => void;
+  initializeColor: (colors: { color: ColorProps }[]) => void;
 
   quantity: number;
   setQuantity: (qty: number) => void;
@@ -56,7 +40,7 @@ export const useProductsStore = create<StoreState>((set) => ({
   adjustedPrice: 0,
   setAdjustedPrice: (price: number) => set({ adjustedPrice: price }),
 
-  initializeSize: (sizes: ProductSize[], basePrice: number) => {
+  initializeSize: (sizes: ProductSizeProps[], basePrice: number) => {
     if (sizes.length > 0) {
       const firstSize = sizes[0];
       set({
@@ -79,7 +63,7 @@ export const useProductsStore = create<StoreState>((set) => ({
   selectedColorName: '',
   setSelectedColorName: (name: string) => set({ selectedColorName: name }),
 
-  initializeColor: (colors: { color: Color }[]) => {
+  initializeColor: (colors: { color: ColorProps }[]) => {
     if (colors.length > 0) {
       const firstColor = colors[0].color;
       set({

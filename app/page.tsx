@@ -1,28 +1,38 @@
 import Link from 'next/link';
+import CardWrapper from './products/components/products/cards';
+import { Suspense } from 'react';
+import { CardsSkeleton } from './ui/skeletons';
+import MailingListForm from './components/mailingList/MailingListForm';
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className='w-full font-[family-name:var(--font-inter)] p-4 md:p-0'>
-      <main className='w-full flex flex-col items-center justify-center mt-12'>
-        <h1 className='text-4xl font-bold text-center'>
-          Welcome to the Chef Cella Site!
-        </h1>
-        <p className='text-base md:text-lg mt-4 text-center'>
-          This is a site for the Chef Cella brand. It is a work in progress and
-          will be updated as we add more products and features.
-        </p>
-        <p className='mt-4 font-bold text-2xl text-center'>
-          In the mean time, check out our products!
-        </p>
-        <p className='text-2xl md:text-3xl mt-4 text-center'>
-          👇👇👇👇👇👇👇👇👇👇👇👇👇👇
-        </p>
-        <Link href='/products' className='button-85 mt-8'>
-          See all Products
-        </Link>
-        <Link href='/track-order' className='mt-12 underline text-blue-500'>
-          Track Order
-        </Link>
+      <main className='w-full flex flex-col items-center justify-center mt-6'>
+        <h1 className='text-3xl font-bold text-center'>What Up Y&apos;all!</h1>
+        <div
+          className='w-full h-[450px] mt-4 flex flex-col items-center justify-between p-8'
+          style={{
+            backgroundImage: `url(hero_img.png)`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'top',
+          }}
+        >
+          <div></div>
+          <Link href='/products' className='button-85'>
+            Shop all Chef Cella Products
+          </Link>
+        </div>
+        <h2 className='text-2xl font-bold text-center mt-8'>
+          The Chef Cella First Drop is Live
+        </h2>
+        <div className='w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-12'>
+          <Suspense fallback={<CardsSkeleton />}>
+            <CardWrapper />
+          </Suspense>
+        </div>
+        <Suspense>
+          <MailingListForm />
+        </Suspense>
       </main>
     </div>
   );

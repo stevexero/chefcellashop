@@ -2,21 +2,9 @@
 
 import { useEffect } from 'react';
 import { useProductsStore } from '../../store';
-import { ColorProps } from '@/app/types/types';
+import { ColorProps, ProductColorSelectorProps } from '@/app/types/types';
 
-interface Product {
-  product_id: string;
-  product_images: { image_url: string; color_id: string }[];
-  product_colors: {
-    color: { color_id: string; color_name: string; color_hex_code: string };
-  }[];
-}
-
-interface ColorSelectorProps {
-  product: Product;
-}
-
-export default function ColorSelector({ product }: ColorSelectorProps) {
+export default function ColorSelector({ product }: ProductColorSelectorProps) {
   const {
     selectedColorId,
     selectedColorName,

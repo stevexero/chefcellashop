@@ -5,46 +5,18 @@ import Cookies from 'js-cookie';
 import OrderItem from './OrderItem';
 import CustomerDetails from './CustomerDetails';
 import OrderNumber from './OrderNumber';
-
-interface OrderLineItem {
-  order_item_id: string;
-  product_id: string;
-  quantity: number;
-  price: number;
-  products: {
-    product_name: string;
-    product_images: { image_url: string; color_id: string }[];
-  };
-  sizes: { size: string; size_id: string } | null;
-  colors: { color_name: string; color_id: string } | null;
-}
-
-interface OrderSummaryProps {
-  paymentId: string;
-  clientSecret: string;
-  redirectStatus: string;
-}
-
-interface CustomerDetailsProps {
-  email: string;
-  firstName: string;
-  lastName: string;
-  address: {
-    street_address: string;
-    street_address_2: string;
-    city: string;
-    state: string;
-    postal_code: string;
-    country: string;
-  };
-}
+import {
+  OrderLineItemProps,
+  CustomerDetailsProps,
+  OrderSummaryProps,
+} from '@/app/types/types';
 
 export default function OrderSummary({
   paymentId,
   clientSecret,
   redirectStatus,
 }: OrderSummaryProps) {
-  const [orderItems, setOrderItems] = useState<OrderLineItem[]>([]);
+  const [orderItems, setOrderItems] = useState<OrderLineItemProps[]>([]);
   const [customerDetails, setCustomerDetails] =
     useState<CustomerDetailsProps | null>(null);
   const [orderNumber, setOrderNumber] = useState<number | null>(null);
@@ -53,7 +25,6 @@ export default function OrderSummary({
 
   useEffect(() => {
     const createOrder = async () => {
-      // Check localStorage first
       const storedOrder = localStorage.getItem('lastOrder');
       if (storedOrder) {
         const parsedOrder = JSON.parse(storedOrder);
@@ -125,7 +96,6 @@ export default function OrderSummary({
           setCustomerDetails(data.customerDetails);
           setOrderNumber(data.orderNumber);
 
-          // Store order details in localStorage
           localStorage.setItem(
             'lastOrder',
             JSON.stringify({
@@ -136,7 +106,6 @@ export default function OrderSummary({
           );
         }
 
-        // Clear cookies after successful order
         Cookies.remove('cartId');
         Cookies.remove('shippingAddressId');
       } catch (error) {
@@ -156,7 +125,6 @@ export default function OrderSummary({
     console.log('customerDetails:', customerDetails);
   }, [customerDetails]);
 
-  // Add cleanup effect
   useEffect(() => {
     return () => {
       localStorage.removeItem('lastOrder');

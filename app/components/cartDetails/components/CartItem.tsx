@@ -21,9 +21,6 @@ export default function CartItem({
   const [isEditingQuantity, setIsEditingQuantity] = useState(false);
   const quantity = itemQuantities[item?.cart_item_id || ''] || item?.quantity;
 
-  // const selectedImage =
-  //   item?.products?.[0]?.product_images[0]?.image_url || '/NIA.jpg';
-
   const selectedImage =
     item?.products?.[0]?.product_images.find(
       (image) => image.color_id === item.color_id

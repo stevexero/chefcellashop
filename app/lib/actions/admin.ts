@@ -1,38 +1,7 @@
 'use server';
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/app/lib/supabase/server';
 import { ColorProps } from '../../types/types';
-
-/***********************/
-/* Add Category Action */
-/***********************/
-export const addCategoryAction = async (formData: FormData) => {
-  const categoryName = formData.get('add-category-field') as string;
-
-  const sanitizedCategoryName = categoryName
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-zA-Z0-9\-]/g, '');
-
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from('categories')
-    .insert([{ category_name: sanitizedCategoryName }])
-    .select('*')
-    .single();
-
-  if (error) {
-    return { status: 'error', message: error.message };
-  }
-
-  return {
-    status: 'success',
-    message: 'Category created successfully!',
-    category_id: data.category_id,
-  };
-};
 
 /**********************/
 /* Add Product Action */

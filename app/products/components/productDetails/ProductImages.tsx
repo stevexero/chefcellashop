@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { useProductsStore } from '../../store';
-import { useEffect } from 'react';
 import { ProductProps } from '@/app/types/types';
 
 export default function ProductImages({ product }: ProductProps) {

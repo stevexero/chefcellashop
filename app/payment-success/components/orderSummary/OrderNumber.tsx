@@ -1,5 +1,3 @@
-'use client';
-
 export default function OrderNumber({ orderNumber }: { orderNumber: number }) {
   return (
     <div className='bg-white/10 p-6 rounded-lg'>

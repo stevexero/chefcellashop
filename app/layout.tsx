@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from './components/navbar/navbar';
 import UserModal from './components/UserModal';
-import { createClient } from './utils/supabase/server';
+import { createClient } from './lib/supabase/server';
 import AddProductModal from './dashboard/components/addProduct/components/AddProductModal';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -42,7 +42,7 @@ export default async function RootLayout({
         <AddProductModal />
         <CartModal />
         <ToastContainer />
-        <Footer />
+        <Footer user={user} />
       </body>
     </html>
   );

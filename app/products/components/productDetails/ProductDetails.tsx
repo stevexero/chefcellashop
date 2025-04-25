@@ -9,39 +9,7 @@ import ProductPrice from '@/app/products/components/productDetails/ProductPrice'
 import ProductColors from '@/app/products/components/productDetails/ProductColors';
 import ProductSizes from '@/app/products/components/productDetails/ProductSizes';
 import { useProductsStore } from '@/app/products/store';
-
-interface Category {
-  category_id: string;
-  category_name: string;
-}
-
-interface Size {
-  size_id: string;
-  size: string;
-}
-
-interface ProductSize {
-  size_id: string;
-  price_mod: number;
-  size: Size;
-}
-
-interface Product {
-  product_id: string;
-  product_name: string;
-  base_price: number;
-  description?: string;
-  product_images: { image_url: string; color_id: string }[];
-  product_colors: {
-    color: { color_id: string; color_name: string; color_hex_code: string };
-  }[];
-  product_sizes: ProductSize[];
-  categories: Category;
-}
-
-interface ProductDetailsProps {
-  product: Product;
-}
+import { ProductDetailsProps } from '@/app/types/types';
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
   const { adjustedPrice } = useProductsStore();
@@ -60,7 +28,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             : adjustedPrice
         }
       />
-      {/* <ProductColors colors={product.product_colors} /> */}
       <ProductColors product={product} />
       <ProductSizes
         sizes={product.product_sizes}

@@ -2,16 +2,12 @@
 
 import { useEffect } from 'react';
 import { useClientStore } from '@/app/store/clientStore';
-import { signOutAction } from '../lib/actions/actions';
+import { signOutAction } from '@/app/(auth-pages)/actions/actions';
 import Link from 'next/link';
 import { User } from '@supabase/supabase-js';
 import { FaTimes } from 'react-icons/fa';
 
-interface UserModalProps {
-  user: User | null;
-}
-
-const UserModal = ({ user }: UserModalProps) => {
+const UserModal = ({ user }: { user: User | null }) => {
   const { activeModal, toggleModal } = useClientStore();
   const isOpen = activeModal === 'user';
 

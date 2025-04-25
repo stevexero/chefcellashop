@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import { BiMinus, BiPlus } from 'react-icons/bi';
 import { useProductsStore } from '../../store';
-import { useEffect } from 'react';
 
 const QuantitySelector = () => {
   const { quantity, setQuantity } = useProductsStore();
@@ -20,7 +20,6 @@ const QuantitySelector = () => {
   };
 
   useEffect(() => {
-    // Initialize to 1
     if (quantity > 1) {
       setQuantity(1);
     }
