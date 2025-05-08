@@ -30,7 +30,7 @@ export default function CartItems({ item }: { item: CartItem }) {
             ?.replaceAll('-', ' ')
             .toUpperCase() || 'Unknown'}
         </p>
-        <div className='grid grid-cols-4 gap-2'>
+        <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
           <p className='text-sm md:text-lg'>
             <span className='font-semibold'>Size:</span>{' '}
             {item.sizes?.[0]?.size || 'N/A'}
@@ -49,9 +49,12 @@ export default function CartItems({ item }: { item: CartItem }) {
               <span className='line-through text-red-500'>
                 ${((item.old_price || 0) * (item.quantity || 0)).toFixed(2)}
               </span>
-              <span className='text-green-500 font-bold'>
+              <div>
+                <br />
+              </div>
+              <p className='text-green-500 font-bold text-right -mt-6'>
                 ${((item.price || 0) * (item.quantity || 0)).toFixed(2)}
-              </span>
+              </p>
             </p>
           ) : (
             <p className='text-sm md:text-lg'>
