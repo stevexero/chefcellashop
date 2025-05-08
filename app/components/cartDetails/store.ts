@@ -14,6 +14,9 @@ interface CartItem {
   products: { product_name: string; product_images: ProductImage[] }[];
   sizes: { size: string }[] | null;
   colors: { color_name: string }[] | null;
+  coupon_id: string | null;
+  old_price: number | null;
+  coupon: [{ code: string }] | null;
 }
 
 interface CartStore {

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { BiMinus, BiPlus, BiTrash } from 'react-icons/bi';
 import { CartItem } from '@/app/types/types';
+import { useRouter } from 'next/navigation';
 
 interface CartModalItemProps {
   item: CartItem;
@@ -18,7 +19,7 @@ export default function CartModalItem({
 }: CartModalItemProps) {
   const [quantity, setQuantity] = useState(item.quantity);
   const [isEditingQuantity, setIsEditingQuantity] = useState(false);
-
+  const router = useRouter();
   const selectedImage =
     item?.products?.[0]?.product_images.find(
       (image) => image.color_id === item.color_id
@@ -43,6 +44,7 @@ export default function CartModalItem({
   const handleUpdateQuantity = () => {
     updateItemQuantity(item?.cart_item_id || '', quantity || 0);
     setIsEditingQuantity(false);
+    router.refresh();
   };
 
   return (
@@ -65,23 +67,55 @@ export default function CartModalItem({
           </p>
           <button
             className='ml-4 text-red-500 hover:text-red-700 cursor-pointer'
-            onClick={() => removeItemFromCart(item?.cart_item_id || '')}
+            onClick={() => {
+              removeItemFromCart(item?.cart_item_id || '');
+              router.refresh();
+            }}
           >
             <BiTrash size={18} />
           </button>
         </div>
         <div className='w-full flex flex-row items-center justify-between'>
-          <div className='text-xs font-semibold mt-2'>
-            <p>{item.sizes?.[0]?.size || 'N/A'}</p>
+          <div className='text-xs font-semibold'>
+            {item.old_price && item.coupon_id ? (
+              <p>
+                <span className='font-semibold'>Price:</span>&nbsp;
+                <span className='line-through text-red-500'>
+                  ${item.old_price.toFixed(2)}
+                </span>
+                <span className='text-black font-bold'>
+                  ${item.price!.toFixed(2)}
+                </span>
+              </p>
+            ) : (
+              <p>
+                <span className='font-semibold'>Price:</span> $
+                {((item.price || 0) * (item.quantity || 0)).toFixed(2)}
+              </p>
+            )}
+            <p className='mt-2'>{item.sizes?.[0]?.size || 'N/A'}</p>
             <p>{item.colors?.[0]?.color_name || 'N/A'}</p>
-            <p>${item.price?.toFixed(2) || 'N/A'} each</p>
-            <p>
-              x{quantity} = $
-              {((item?.price || 0) * (item?.quantity || 0)).toFixed(2)}
+            {/* <p>${item.price?.toFixed(2) || 'N/A'} each</p> */}
+
+            <p className='mt-4'>
+              x{quantity} =&nbsp;
+              {item.old_price && item.coupon_id ? (
+                <>
+                  <span className='line-through text-red-500'>
+                    $
+                    {((item.old_price || 0) * (item?.quantity || 0)).toFixed(2)}
+                  </span>
+                  <span className='text-black font-bold'>
+                    ${((item.price || 0) * (item?.quantity || 0)).toFixed(2)}
+                  </span>
+                </>
+              ) : (
+                ((item?.price || 0) * (item?.quantity || 0)).toFixed(2)
+              )}
             </p>
           </div>
           <div>
-            <div className='flex flex-row items-center border border-slate-700'>
+            <div className='flex flex-row items-center border border-slate-700 mt-2 -ml-4'>
               <button
                 className='cursor-pointer bg-slate-700 text-white p-1'
                 onClick={handleDecrement}

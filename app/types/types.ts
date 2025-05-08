@@ -49,6 +49,9 @@ export interface CartItem {
   }[];
   sizes?: { size: string }[] | null;
   colors?: { color_name: string }[] | null;
+  coupon_id?: string | null;
+  old_price?: number | null;
+  coupon?: [{ code: string }] | null;
 }
 
 export interface AddItemToCartProps {

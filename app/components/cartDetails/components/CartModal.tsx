@@ -9,7 +9,7 @@ import { useStore } from '../store';
 
 const CartModal = () => {
   const { activeModal, toggleModal } = useClientStore();
-  const { cartItems, setCartItems } = useStore();
+  const { cartItems, setCartItems, itemQuantities } = useStore();
 
   const [loading, setLoading] = useState(false);
 
@@ -33,9 +33,18 @@ const CartModal = () => {
     }
   }, [setCartItems]);
 
+  // const calculateTotal = () => {
+  //   return cartItems
+  //     .reduce((total, item) => total + item.price * item.quantity, 0)
+  //     .toFixed(2);
+  // };
+
   const calculateTotal = () => {
     return cartItems
-      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .reduce((total, item) => {
+        const quantity = itemQuantities[item.cart_item_id] || item.quantity;
+        return total + item.price * quantity;
+      }, 0)
       .toFixed(2);
   };
 

@@ -5,11 +5,12 @@ import CartItem from './components/CartItem';
 import Link from 'next/link';
 import { BiArrowToLeft } from 'react-icons/bi';
 import { useStore } from './store';
-
+import { useRouter } from 'next/navigation';
 export default function CartDetails() {
   const [loading, setLoading] = useState(false);
   const { cartItems, setCartItems, itemQuantities, resetItemQuantities } =
     useStore();
+  const router = useRouter();
 
   const fetchCartItems = async () => {
     setLoading(true);
@@ -38,6 +39,30 @@ export default function CartDetails() {
       .toFixed(2);
   };
 
+  let oldTotal = '';
+  if (cartItems && cartItems[0]?.coupon_id) {
+    oldTotal = cartItems
+      .reduce(
+        (sum, item) => sum + (item.old_price || 0) * (item.quantity || 0),
+        0
+      )
+      .toFixed(2);
+  }
+
+  let discount = '';
+  if (cartItems && cartItems[0]?.coupon_id) {
+    const total = parseFloat(calculateTotal());
+    discount = (total - parseFloat(oldTotal)).toFixed(2);
+  }
+
+  let discountCode = '';
+  if (cartItems && cartItems[0]?.coupon) {
+    console.log('Coupon code=======', cartItems[0].coupon[0].code);
+    // get coupon code from cartItems[0].coupon_id
+    const couponCode = cartItems[0].coupon[0].code;
+    discountCode = couponCode;
+  }
+
   const removeItemFromCart = async (cart_item_id: string) => {
     const formData = new FormData();
     formData.append('cart_item_id', cart_item_id);
@@ -47,6 +72,7 @@ export default function CartDetails() {
     });
     const data = await response.json();
     console.log(data);
+    router.refresh();
     fetchCartItems();
   };
 
@@ -73,7 +99,15 @@ export default function CartDetails() {
       {loading ? (
         <p>Loading...</p>
       ) : cartItems.length === 0 ? (
-        <p>Your cart is empty</p>
+        <div className='flex flex-col items-center justify-center'>
+          <p className='text-center text-2xl font-bold'>Your cart is empty</p>
+          <Link
+            href='/products'
+            className='text-blue-500 font-bold text-xl underline mt-4'
+          >
+            Return to Shop
+          </Link>
+        </div>
       ) : (
         <>
           <div className='flex-1 overflow-y-auto'>
@@ -100,9 +134,27 @@ export default function CartDetails() {
                 updateItemQuantity={updateItemQuantity}
               />
             ))}
-            <div className='mt-4'>
-              <p className='font-bold text-right'>Total: ${calculateTotal()}</p>
-            </div>
+            {cartItems[0].coupon_id && (
+              <p className='font-bold text-sm text-right mt-4'>
+                <span className='line-through text-red-500'>
+                  Total: ${oldTotal}
+                </span>
+              </p>
+            )}
+            {discountCode && (
+              <p className='font-bold text-sm text-right mt-4'>
+                <span className='text-green-500'>Coupon Code Used:</span>{' '}
+                {discountCode}
+              </p>
+            )}
+            {cartItems[0].coupon_id && (
+              <p className='font-bold text-sm text-right mt-4'>
+                <span className='text-green-500'>Discount: ${discount}</span>
+              </p>
+            )}
+            <p className='font-bold text-sm md:text-xl text-right mt-4'>
+              New Total: ${calculateTotal()}
+            </p>
           </div>
           <Link
             href='/checkout'

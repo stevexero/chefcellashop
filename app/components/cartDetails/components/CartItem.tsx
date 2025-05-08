@@ -69,7 +69,23 @@ export default function CartItem({
             <div className='md:w-72 text-xs md:text-base grid grid-cols-1 md:grid-cols-3 gap-2'>
               <p>{item.sizes?.[0]?.size || 'N/A'}</p>
               <p>{item.colors?.[0]?.color_name || 'N/A'}</p>
-              <p>${item.price?.toFixed(2) || 'N/A'}</p>
+              {/* <p>${item.price?.toFixed(2) || 'N/A'}</p> */}
+              {item.old_price && item.coupon_id ? (
+                <p className='text-sm md:text-lg'>
+                  <span className='font-semibold'>Price:</span>&nbsp;
+                  <span className='line-through text-red-500'>
+                    ${item.old_price.toFixed(2)}
+                  </span>
+                  <span className='text-green-500 font-bold'>
+                    ${item.price!.toFixed(2)}
+                  </span>
+                </p>
+              ) : (
+                <p className='text-sm md:text-lg'>
+                  <span className='font-semibold'>Price:</span> $
+                  {((item.price || 0) * (item.quantity || 0)).toFixed(2)}
+                </p>
+              )}
             </div>
           </div>
           <div className='flex flex-row items-center gap-2'>
@@ -98,9 +114,25 @@ export default function CartItem({
             )}
           </div>
           <div className='mt-4 md:mt-0 flex flex-row md:flex-col items-center md:items-end gap-2'>
-            <p className='font-bold text-sm md:text-xl'>
+            {item.old_price && item.coupon_id ? (
+              <p className='text-sm md:text-lg'>
+                <span className='font-semibold'>Price:</span>&nbsp;
+                <span className='line-through text-red-500'>
+                  ${((item.old_price || 0) * (item.quantity || 0)).toFixed(2)}
+                </span>
+                <span className='text-green-500 font-bold'>
+                  ${((item.price || 0) * (item.quantity || 0)).toFixed(2)}
+                </span>
+              </p>
+            ) : (
+              <p className='text-sm md:text-lg'>
+                <span className='font-semibold'>Price:</span> $
+                {((item.price || 0) * (item.quantity || 0)).toFixed(2)}
+              </p>
+            )}
+            {/* <p className='font-bold text-sm md:text-xl'>
               ${(item?.price || 0) * (item?.quantity || 0)}
-            </p>
+            </p> */}
             <button
               className='ml-4 text-red-500 hover:text-red-700 cursor-pointer'
               onClick={() => removeItemFromCart(item?.cart_item_id || '')}

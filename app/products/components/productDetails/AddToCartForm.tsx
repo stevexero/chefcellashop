@@ -5,7 +5,7 @@ import { useProductsStore } from '../../store';
 import { useClientStore } from '@/app/store/clientStore';
 import Cookies from 'js-cookie';
 import { AddItemToCartProps } from '@/app/types/types';
-
+// TODO: Apply coupon to new cart item
 export default function AddToCartForm({
   productId,
   isOneSize,

@@ -43,10 +43,22 @@ export default function CartItems({ item }: { item: CartItem }) {
             <span className='font-semibold'>Quantity:</span>{' '}
             {item.quantity || 0}
           </p>
-          <p className='text-sm md:text-lg'>
-            <span className='font-semibold'>Price:</span> $
-            {((item.price || 0) * (item.quantity || 0)).toFixed(2)}
-          </p>
+          {item.old_price && item.coupon_id ? (
+            <p className='text-sm md:text-lg'>
+              <span className='font-semibold'>Price:</span>&nbsp;
+              <span className='line-through text-red-500'>
+                ${((item.old_price || 0) * (item.quantity || 0)).toFixed(2)}
+              </span>
+              <span className='text-green-500 font-bold'>
+                ${((item.price || 0) * (item.quantity || 0)).toFixed(2)}
+              </span>
+            </p>
+          ) : (
+            <p className='text-sm md:text-lg'>
+              <span className='font-semibold'>Price:</span> $
+              {((item.price || 0) * (item.quantity || 0)).toFixed(2)}
+            </p>
+          )}
         </div>
       </div>
     </div>

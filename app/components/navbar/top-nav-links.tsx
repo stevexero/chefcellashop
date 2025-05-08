@@ -5,11 +5,15 @@ import { useEffect, useState } from 'react';
 import { CiShoppingCart } from 'react-icons/ci';
 import { useClientStore } from '@/app/store/clientStore';
 import { usePathname } from 'next/navigation';
+import { useStore } from '../cartDetails/store';
 
 const TopNavLinks = () => {
-  const { toggleModal, cartItems, setCartItems } = useClientStore();
+  // const { toggleModal, cartItems, setCartItems } = useClientStore();
+  const { toggleModal } = useClientStore();
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
+  // TODO: Fix store
+  const { cartItems, setCartItems } = useStore();
 
   useEffect(() => {
     if (pathname === '/payment-success') {

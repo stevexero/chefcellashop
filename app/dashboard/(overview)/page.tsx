@@ -7,6 +7,8 @@ import StripeCard from '../components/StripeCard';
 import { fetchUserProfileByUserId, getOrders } from '@/app/dashboard/data';
 import MailCard from '../components/mail/MailCard';
 import MailRequestsCard from '../components/mail/MailRequestsCard';
+import CouponsList from '../components/coupons/CouponsList';
+import AddCoupon from '../components/coupons/AddCoupon';
 export default async function Dashboard() {
   const supabase = await createClient();
   const {
@@ -15,8 +17,6 @@ export default async function Dashboard() {
 
   const userProfile = await fetchUserProfileByUserId(user!.id);
   const orders = await getOrders();
-
-  console.log(userProfile);
 
   return (
     <>
@@ -34,6 +34,11 @@ export default async function Dashboard() {
             </Suspense>
           </div>
         )}
+        <div className='w-full col-span-2'>
+          <Suspense fallback={<div>Loading...</div>}>
+            <CouponsList />
+          </Suspense>
+        </div>
       </div>
       <div className='flex flex-col'>
         <Suspense fallback={<div>Loading...</div>}>
@@ -46,6 +51,9 @@ export default async function Dashboard() {
         {/* )} */}
         <Suspense fallback={<div>Loading...</div>}>
           <StripeCard userProfile={userProfile} />
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AddCoupon />
         </Suspense>
       </div>
     </>

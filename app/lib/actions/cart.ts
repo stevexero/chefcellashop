@@ -19,13 +19,11 @@ export async function addItemToCartAction(formData: FormData) {
     data: { user },
   } = await supabase.auth.getUser();
   const userId = user?.id || null;
-  console.log('========== userId ==========', userId);
 
   const session = await getSession();
-  console.log('========== session ==========', session);
   let cartId = session.cartId;
-  console.log('========== cartId ==========', cartId);
 
+  // 1) Determine unit price
   const { data: product, error } = await supabase
     .from('products')
     .select('base_price')
@@ -35,7 +33,6 @@ export async function addItemToCartAction(formData: FormData) {
   if (error) {
     return { error: error.message };
   }
-  console.log('========== product ==========', product);
 
   if (sizeId === 'one-size') {
     sizeId = null;
@@ -54,8 +51,8 @@ export async function addItemToCartAction(formData: FormData) {
     }
     price = product.base_price + (sizeMod?.price_mod || 0);
   }
-  console.log('========== price ==========', price);
 
+  // 2) Resolve or create cart
   if (userId) {
     const { data: cart, error: cartError } = await supabase
       .from('carts')
@@ -66,7 +63,6 @@ export async function addItemToCartAction(formData: FormData) {
     if (cartError && cartError.code !== 'PGRST116')
       return { error: cartError.message };
     cartId = cart?.cart_id;
-    console.log('========== userId cartId ==========', cartId);
   } else if (cartId) {
     const { error: cartError } = await supabase
       .from('carts')
@@ -79,7 +75,6 @@ export async function addItemToCartAction(formData: FormData) {
       cartId = null;
       await setSession({ cartId: undefined });
     }
-    console.log('========== cartId ==========', cartId);
   }
 
   if (!cartId) {
@@ -104,7 +99,6 @@ export async function addItemToCartAction(formData: FormData) {
     }
   } else {
     // Verify cart exists
-    console.log('Verifying cart exists:', cartId);
     const { data: cart, error: cartError } = await supabase
       .from('carts')
       .select('cart_id')
@@ -132,6 +126,8 @@ export async function addItemToCartAction(formData: FormData) {
     }
   }
 
+  // 3) Upsert cart_items row
+  let cartItemId: string;
   const { data: existingItem, error: fetchError } = await supabase
     .from('cart_items')
     .select('cart_item_id, quantity')
@@ -143,8 +139,6 @@ export async function addItemToCartAction(formData: FormData) {
   if (fetchError && fetchError.code !== 'PGRST116')
     return { error: fetchError.message };
 
-  console.log('========== existingItem ==========', existingItem);
-
   if (existingItem) {
     const newQuantity = existingItem.quantity + quantity;
     const { error: updateError } = await supabase
@@ -154,14 +148,8 @@ export async function addItemToCartAction(formData: FormData) {
 
     if (updateError) return { error: updateError.message };
 
-    console.log('========== existingItem ==========', existingItem);
+    cartItemId = existingItem.cart_item_id;
   } else {
-    console.log('---===---=== cartId ---===---===', cartId);
-    console.log('---===---=== productId ---===---===', productId);
-    console.log('---===---=== sizeId ---===---===', sizeId);
-    console.log('---===---=== colorId ---===---===', colorId);
-    console.log('---===---=== quantity ---===---===', quantity);
-    console.log('---===---=== price ---===---===', price);
     const { data, error } = await supabase
       .from('cart_items')
       .insert([
@@ -177,14 +165,73 @@ export async function addItemToCartAction(formData: FormData) {
       .select('*')
       .single();
 
-    console.log('========== data ==========', data);
-
     if (error) {
       console.error('Error inserting cart item:', error);
       return { error: error.message };
     }
 
-    console.log('========== data ==========', data);
+    cartItemId = data.cart_item_id;
+  }
+
+  // 4) Look for an existing coupon on any item in this cart
+  const { data: existingCouponRow, error: couponFetchErr } = await supabase
+    .from('cart_items')
+    .select('coupon_id')
+    .eq('cart_id', cartId)
+    .not('coupon_id', 'is', null)
+    .limit(1)
+    .maybeSingle();
+  if (couponFetchErr) {
+    console.error('Error fetching existing coupon:', couponFetchErr);
+  }
+
+  console.log('========== existingCouponRow ==========', existingCouponRow);
+
+  // only continue if there really is one
+  if (existingCouponRow?.coupon_id) {
+    const couponId = existingCouponRow.coupon_id;
+
+    console.log('========== couponId ==========', couponId);
+
+    // 5) Fetch coupon rules
+    const { data: coupon, error: couponErr } = await supabase
+      .from('coupons')
+      .select('type, amount_off, percent_off')
+      .eq('coupon_id', couponId)
+      .single();
+
+    console.log('========== coupon ==========', coupon);
+
+    if (!couponErr && coupon) {
+      // 6) compute discounted_price off your unit price
+      let discountedPrice = price;
+
+      console.log('========== price ==========', price);
+      console.log(
+        '========== coupon.percent_off ==========',
+        coupon.percent_off
+      );
+      console.log('========== coupon.amount_off ==========', coupon.amount_off);
+      console.log('========== coupon.type ==========', coupon.type);
+
+      if (coupon.type === 'percent_off') {
+        discountedPrice = Number(
+          (price * (1 - coupon.percent_off! / 100)).toFixed(2)
+        );
+      } else if (coupon.type === 'amount_off') {
+        discountedPrice = Number((price - coupon.amount_off!).toFixed(2));
+      }
+
+      // 7) write it back onto just the new/updated item
+      await supabase
+        .from('cart_items')
+        .update({
+          coupon_id: couponId,
+          old_price: price,
+          price: discountedPrice,
+        })
+        .eq('cart_item_id', cartItemId);
+    }
   }
 
   return { message: 'Item added to cart successfully', cartId };
