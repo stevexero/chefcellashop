@@ -14,7 +14,7 @@ export default async function PaymentSuccess(props: {
   const {
     amount,
     payment_intent,
-    payment_intent_client_secret,
+    // payment_intent_client_secret,
     redirect_status,
   } = searchParams;
 
@@ -24,7 +24,9 @@ export default async function PaymentSuccess(props: {
         <h1 className='text-4xl font-extrabold mb-2'>Thank you!</h1>
         <h2 className='text-2xl'>Your order has been received</h2>
 
-        <div className='p-2 text-black mt-5 text-2xl font-bold'>${amount}</div>
+        <div className='p-2 text-black mt-5 text-2xl font-bold'>
+          ${parseFloat(amount).toFixed(2)}
+        </div>
         <Link href='/' className='text-blue-500 text-lg underline'>
           Back to home
         </Link>
@@ -32,7 +34,7 @@ export default async function PaymentSuccess(props: {
       <Suspense fallback={<div>Loading...</div>}>
         <OrderSummary
           paymentId={payment_intent}
-          clientSecret={payment_intent_client_secret}
+          // clientSecret={payment_intent_client_secret}
           redirectStatus={redirect_status}
         />
       </Suspense>

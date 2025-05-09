@@ -13,7 +13,6 @@ import {
 
 export default function OrderSummary({
   paymentId,
-  clientSecret,
   redirectStatus,
 }: OrderSummaryProps) {
   const [orderItems, setOrderItems] = useState<OrderLineItemProps[]>([]);
@@ -25,14 +24,19 @@ export default function OrderSummary({
 
   useEffect(() => {
     const createOrder = async () => {
-      const storedOrder = localStorage.getItem('lastOrder');
-      if (storedOrder) {
-        const parsedOrder = JSON.parse(storedOrder);
-        setOrderItems(parsedOrder.orderItems);
-        setCustomerDetails(parsedOrder.customerDetails);
-        setOrderNumber(parsedOrder.orderNumber);
-        setLoading(false);
-        return;
+      const raw = localStorage.getItem('lastOrder');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.paymentId === paymentId) {
+          setOrderItems(parsed.orderItems);
+          setCustomerDetails(parsed.customerDetails);
+          setOrderNumber(parsed.orderNumber);
+          localStorage.removeItem('lastOrder');
+          setLoading(false);
+          return;
+        } else {
+          localStorage.removeItem('lastOrder');
+        }
       }
 
       if (redirectStatus !== 'succeeded') {
@@ -49,19 +53,8 @@ export default function OrderSummary({
 
       const cartId = Cookies.get('cartId');
       const shippingAddressId = Cookies.get('shippingAddressId');
-
-      console.log('All cookies:', Cookies.get());
-      console.log('cartId:', Cookies.get('cartId'));
-      console.log('shippingAddressId:', Cookies.get('shippingAddressId'));
-
-      if (!shippingAddressId) {
-        setError('Missing required shippingAddressId information');
-        setLoading(false);
-        return;
-      }
-
-      if (!cartId) {
-        setError('Missing required cartId information');
+      if (!cartId || !shippingAddressId) {
+        setError('Missing cart or shipping info');
         setLoading(false);
         return;
       }
@@ -77,39 +70,27 @@ export default function OrderSummary({
           body: formData,
         });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to create order');
-        }
+        if (!response.ok)
+          throw new Error((await response.json()).error || 'Create failed');
 
         const data = await response.json();
 
-        console.log(data);
-
-        if (data.error) {
-          setError(data.error);
-          return;
-        }
-
-        if (data.orderItems) {
-          setOrderItems(data.orderItems);
-          setCustomerDetails(data.customerDetails);
-          setOrderNumber(data.orderNumber);
-
-          localStorage.setItem(
-            'lastOrder',
-            JSON.stringify({
-              orderItems: data.orderItems,
-              customerDetails: data.customerDetails,
-              orderNumber: data.orderNumber,
-            })
-          );
-        }
+        setOrderItems(data.orderItems);
+        setCustomerDetails(data.customerDetails);
+        setOrderNumber(data.orderNumber);
+        localStorage.setItem(
+          'lastOrder',
+          JSON.stringify({
+            paymentId,
+            orderItems: data.orderItems,
+            customerDetails: data.customerDetails,
+            orderNumber: data.orderNumber,
+          })
+        );
 
         Cookies.remove('cartId');
         Cookies.remove('shippingAddressId');
       } catch (error) {
-        console.error('Order creation error:', error);
         setError(
           error instanceof Error ? error.message : 'Failed to create order'
         );
@@ -119,17 +100,7 @@ export default function OrderSummary({
     };
 
     createOrder();
-  }, [paymentId, clientSecret, redirectStatus]);
-
-  useEffect(() => {
-    console.log('customerDetails:', customerDetails);
-  }, [customerDetails]);
-
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem('lastOrder');
-    };
-  }, []);
+  }, [paymentId, redirectStatus]);
 
   if (loading) {
     return (

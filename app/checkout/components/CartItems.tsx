@@ -44,7 +44,7 @@ export default function CartItems({ item }: { item: CartItem }) {
             {item.quantity || 0}
           </p>
           {item.old_price && item.coupon_id ? (
-            <p className='text-sm md:text-lg'>
+            <div className='text-sm md:text-lg'>
               <span className='font-semibold'>Price:</span>&nbsp;
               <span className='line-through text-red-500'>
                 ${((item.old_price || 0) * (item.quantity || 0)).toFixed(2)}
@@ -55,7 +55,7 @@ export default function CartItems({ item }: { item: CartItem }) {
               <p className='text-green-500 font-bold text-right -mt-6'>
                 ${((item.price || 0) * (item.quantity || 0)).toFixed(2)}
               </p>
-            </p>
+            </div>
           ) : (
             <p className='text-sm md:text-lg'>
               <span className='font-semibold'>Price:</span> $

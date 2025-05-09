@@ -133,7 +133,7 @@ export interface OrderDetailsProps {
 
 export interface OrderSummaryProps {
   paymentId: string;
-  clientSecret: string;
+  // clientSecret: string;
   redirectStatus: string;
 }
 

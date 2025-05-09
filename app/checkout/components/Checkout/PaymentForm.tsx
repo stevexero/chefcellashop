@@ -117,7 +117,7 @@ export default function PaymentForm({
           disabled={!stripe || loading}
           className='text-white w-full p-5 bg-black mt-12 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse cursor-pointer hover:opacity-70'
         >
-          {!loading ? `Pay $${amount}` : 'Processing...'}
+          {!loading ? `Pay $${amount.toFixed(2)}` : 'Processing...'}
         </button>
       </form>
     </>
