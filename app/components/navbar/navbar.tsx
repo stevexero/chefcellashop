@@ -40,21 +40,39 @@ const Navbar = ({ user }: NavbarProps) => {
           )}
         </>
       )}
-      <div className='w-full flex items-center justify-center p-2 border-b border-b-slate-300 text-center'>
+      <div className='w-full flex items-center justify-center p-2 border-b border-b-slate-300 text-center bg-red-500'>
         {user && pathname === '/dashboard' ? null : (
           <>
             {pathname.startsWith('/dashboard') ? null : (
               <div className='flex flex-col md:flex-row items-center justify-center'>
-                <p className='text-xs md:text-base'>
-                  All orders processed and shipped the same day!
-                </p>
+                <div>
+                  <p className='text-xl text-white'>
+                    ATTENTION Y&apos;ALL! Order fulfillment and shipping is
+                    currently on hold until July 24th, 2025.
+                  </p>
+                  <p className='text-white'>
+                    You can still buy stuff but we can&apos;t ship it until the
+                    24th of July. #vacationmode.
+                  </p>
+                </div>
                 <Link
                   href='/track-order'
-                  className='ml-4 underline text-blue-500'
+                  className='ml-4 underline text-blue-200'
                 >
                   Track Order Here
                 </Link>
               </div>
+              // <div className='flex flex-col md:flex-row items-center justify-center'>
+              //   <p className='text-xs md:text-base'>
+              //     All orders processed and shipped the same day!
+              //   </p>
+              //   <Link
+              //     href='/track-order'
+              //     className='ml-4 underline text-blue-500'
+              //   >
+              //     Track Order Here
+              //   </Link>
+              // </div>
             )}
           </>
         )}

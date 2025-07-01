@@ -21,7 +21,7 @@
     "imapflow": "^1.0.6",
     "iron-session": "^8.0.4",
     "js-cookie": "^3.0.5",
-    "next": "15.2.2",
+    "next": "^15.3.2",
     "nodemailer": "^6.10.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
